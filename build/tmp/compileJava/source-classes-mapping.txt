@@ -32,8 +32,8 @@ art/arcane/quill/maven/MavenRepository.java
  art.arcane.quill.maven.MavenRepository
 art/arcane/quill/random/noise/stream/convert/RoundingStream.java
  art.arcane.quill.random.noise.stream.convert.RoundingStream
-art/arcane/quill/execution/queue/ShurikenQueue.java
- art.arcane.quill.execution.queue.ShurikenQueue
+art/arcane/quill/collections/point/Point3d.java
+ art.arcane.quill.collections.point.Point3d
 art/arcane/quill/random/noise/stream/interpolation/BiHermiteStream.java
  art.arcane.quill.random.noise.stream.interpolation.BiHermiteStream
 art/arcane/quill/io/bytetag/NBTRawParseException.java
@@ -58,9 +58,8 @@ art/arcane/quill/tools/Platform.java
  art.arcane.quill.tools.Platform$MEMORY$PHYSICAL
  art.arcane.quill.tools.Platform$MEMORY$VIRTUAL
  art.arcane.quill.tools.Platform$STORAGE
-art/arcane/quill/logging/L.java
- art.arcane.quill.logging.L
- art.arcane.quill.logging.L$1
+art/arcane/quill/collections/hunk/view/RotatedZHunkView.java
+ art.arcane.quill.collections.hunk.view.RotatedZHunkView
 art/arcane/quill/random/noise/stream/arithmetic/SubtractingStream.java
  art.arcane.quill.random.noise.stream.arithmetic.SubtractingStream
 art/arcane/quill/execution/Looper.java
@@ -90,8 +89,8 @@ art/arcane/quill/collections/tuple/Tuple4f.java
  art.arcane.quill.collections.tuple.Tuple4f
 art/arcane/quill/io/FileWatcher.java
  art.arcane.quill.io.FileWatcher
-art/arcane/quill/collections/StateList.java
- art.arcane.quill.collections.StateList
+art/arcane/quill/collections/Adapter.java
+ art.arcane.quill.collections.Adapter
 art/arcane/quill/collections/vector/Vector3d.java
  art.arcane.quill.collections.vector.Vector3d
 art/arcane/quill/execution/J.java
@@ -101,8 +100,8 @@ art/arcane/quill/io/bytetag/tag/NBTNonNullEntrySet.java
  art.arcane.quill.io.bytetag.tag.NBTNonNullEntrySet
  art.arcane.quill.io.bytetag.tag.NBTNonNullEntrySet$NonNullEntry
  art.arcane.quill.io.bytetag.tag.NBTNonNullEntrySet$NonNullEntrySetIterator
-art/arcane/quill/plugin/ShurikenPluginSystem.java
- art.arcane.quill.plugin.ShurikenPluginSystem
+art/arcane/quill/random/noise/NoiseFactory.java
+ art.arcane.quill.random.noise.NoiseFactory
 art/arcane/quill/io/bytetag/NBTRawDeserializer.java
  art.arcane.quill.io.bytetag.NBTRawDeserializer
 art/arcane/quill/random/noise/stream/interpolation/BicubicStream.java
@@ -123,13 +122,8 @@ art/arcane/quill/plugin/PluginClassLoader.java
  art.arcane.quill.plugin.PluginClassLoader
 art/arcane/quill/cache/Multicache.java
  art.arcane.quill.cache.Multicache
-art/arcane/quill/execution/queue/TaskExecutor.java
- art.arcane.quill.execution.queue.TaskExecutor
- art.arcane.quill.execution.queue.TaskExecutor$1
- art.arcane.quill.execution.queue.TaskExecutor$AssignedTask
- art.arcane.quill.execution.queue.TaskExecutor$TaskGroup
- art.arcane.quill.execution.queue.TaskExecutor$TaskResult
- art.arcane.quill.execution.queue.TaskExecutor$TaskState
+art/arcane/quill/SVC.java
+ art.arcane.quill.SVC
 art/arcane/quill/tools/AndroidBase64.java
  art.arcane.quill.tools.AndroidBase64
  art.arcane.quill.tools.AndroidBase64$Coder
@@ -141,22 +135,22 @@ art/arcane/quill/io/bytetag/SNBTWriter.java
  art.arcane.quill.io.bytetag.SNBTWriter
 art/arcane/quill/io/bytetag/tag/NBTEndTag.java
  art.arcane.quill.io.bytetag.tag.NBTEndTag
-art/arcane/quill/collections/KListRoundRobin.java
- art.arcane.quill.collections.KListRoundRobin
+art/arcane/quill/collections/functional/Function3.java
+ art.arcane.quill.collections.functional.Function3
 art/arcane/quill/math/DoubleArrayUtils.java
  art.arcane.quill.math.DoubleArrayUtils
-art/arcane/quill/config/ConfigWrapper.java
- art.arcane.quill.config.ConfigWrapper
+art/arcane/quill/maven/MavenArtifact.java
+ art.arcane.quill.maven.MavenArtifact
 art/arcane/quill/random/noise/PerlinNoise.java
  art.arcane.quill.random.noise.PerlinNoise
-art/arcane/quill/math/IrisInterpolation.java
- art.arcane.quill.math.IrisInterpolation
+art/arcane/quill/collections/vector/Vector2d.java
+ art.arcane.quill.collections.vector.Vector2d
 art/arcane/quill/io/bytetag/jnbt/NBTOutputStream.java
  art.arcane.quill.io.bytetag.jnbt.NBTOutputStream
 art/arcane/quill/collections/hunk/view/WriteTrackHunk.java
  art.arcane.quill.collections.hunk.view.WriteTrackHunk
-art/arcane/quill/tools/ExceptionTools.java
- art.arcane.quill.tools.ExceptionTools
+art/arcane/quill/random/noise/CellularNoise.java
+ art.arcane.quill.random.noise.CellularNoise
 art/arcane/quill/tools/JarScanner.java
  art.arcane.quill.tools.JarScanner
 art/arcane/quill/tools/VecMathUtil.java
@@ -172,34 +166,26 @@ art/arcane/quill/json/JSONWriter.java
  art.arcane.quill.json.JSONWriter
 art/arcane/quill/json/JSONTokener.java
  art.arcane.quill.json.JSONTokener
-art/arcane/quill/collections/WeakKMap.java
- art.arcane.quill.collections.WeakKMap
- art.arcane.quill.collections.WeakKMap$1
- art.arcane.quill.collections.WeakKMap$2
- art.arcane.quill.collections.WeakKMap$3
- art.arcane.quill.collections.WeakKMap$4
+art/arcane/quill/io/bytetag/NBTRawStringSerializer.java
+ art.arcane.quill.io.bytetag.NBTRawStringSerializer
 art/arcane/quill/random/noise/FractalRigidMultiSimplexNoise.java
  art.arcane.quill.random.noise.FractalRigidMultiSimplexNoise
-art/arcane/quill/collections/KMap.java
- art.arcane.quill.collections.KMap
- art.arcane.quill.collections.KMap$1
- art.arcane.quill.collections.KMap$2
- art.arcane.quill.collections.KMap$3
- art.arcane.quill.collections.KMap$4
+art/arcane/quill/random/noise/SimplexNoise.java
+ art.arcane.quill.random.noise.SimplexNoise
 art/arcane/quill/random/noise/FractalFBMSimplexNoise.java
  art.arcane.quill.random.noise.FractalFBMSimplexNoise
 art/arcane/quill/random/noise/stream/arithmetic/OffsetStream.java
  art.arcane.quill.random.noise.stream.arithmetic.OffsetStream
 art/arcane/quill/random/noise/stream/BasicStream.java
  art.arcane.quill.random.noise.stream.BasicStream
-art/arcane/quill/lang/AlphabetRange.java
- art.arcane.quill.lang.AlphabetRange
+art/arcane/quill/collections/functional/Callback.java
+ art.arcane.quill.collections.functional.Callback
 art/arcane/quill/collections/FinalLong.java
  art.arcane.quill.collections.FinalLong
 art/arcane/quill/collections/hunk/storage/StorageHunk.java
  art.arcane.quill.collections.hunk.storage.StorageHunk
-art/arcane/quill/collections/NetCache.java
- art.arcane.quill.collections.NetCache
+art/arcane/quill/tools/BlackMagicException.java
+ art.arcane.quill.tools.BlackMagicException
 art/arcane/quill/format/Form.java
  art.arcane.quill.format.Form
 art/arcane/quill/io/IOAdapter.java
@@ -237,8 +223,8 @@ art/arcane/quill/random/noise/stream/arithmetic/ModuloStream.java
  art.arcane.quill.random.noise.stream.arithmetic.ModuloStream
 art/arcane/quill/random/noise/stream/arithmetic/FittedStream.java
  art.arcane.quill.random.noise.stream.arithmetic.FittedStream
-art/arcane/quill/random/WeightMap.java
- art.arcane.quill.random.WeightMap
+art/arcane/quill/io/BPatch.java
+ art.arcane.quill.io.BPatch
 art/arcane/quill/tools/NetworkTools.java
  art.arcane.quill.tools.NetworkTools
 art/arcane/quill/collections/FInt.java
@@ -257,42 +243,42 @@ art/arcane/quill/collections/FinalInteger.java
  art.arcane.quill.collections.FinalInteger
 art/arcane/quill/io/bytetag/jnbt/StringTag.java
  art.arcane.quill.io.bytetag.jnbt.StringTag
-art/arcane/quill/collections/DataPalette.java
- art.arcane.quill.collections.DataPalette
+art/arcane/quill/collections/hunk/view/InvertedHunkView.java
+ art.arcane.quill.collections.hunk.view.InvertedHunkView
 art/arcane/quill/collections/tuple/Tuple3f.java
  art.arcane.quill.collections.tuple.Tuple3f
 art/arcane/quill/collections/ObjectCache.java
  art.arcane.quill.collections.ObjectCache
-art/arcane/quill/random/noise/RarityCellGenerator.java
- art.arcane.quill.random.noise.RarityCellGenerator
+art/arcane/quill/config/Writable.java
+ art.arcane.quill.config.Writable
 art/arcane/quill/random/noise/stream/interpolation/InterpolatingStream.java
  art.arcane.quill.random.noise.stream.interpolation.InterpolatingStream
 art/arcane/quill/io/bytetag/tag/NBTNumberTag.java
  art.arcane.quill.io.bytetag.tag.NBTNumberTag
-art/arcane/quill/random/noise/stream/sources/CNGStream.java
- art.arcane.quill.random.noise.stream.sources.CNGStream
+art/arcane/quill/random/noise/stream/arithmetic/DividingStream.java
+ art.arcane.quill.random.noise.stream.arithmetic.DividingStream
 art/arcane/quill/io/bytetag/jnbt/EndTag.java
  art.arcane.quill.io.bytetag.jnbt.EndTag
-art/arcane/quill/collections/hunk/storage/MappedHunk.java
- art.arcane.quill.collections.hunk.storage.MappedHunk
+art/arcane/quill/collections/functional/ConsumerNasty2.java
+ art.arcane.quill.collections.functional.ConsumerNasty2
 art/arcane/quill/collections/vector/Vector2f.java
  art.arcane.quill.collections.vector.Vector2f
 art/arcane/quill/collections/functional/Consumer3.java
  art.arcane.quill.collections.functional.Consumer3
 art/arcane/quill/plugin/PluginConfig.java
  art.arcane.quill.plugin.PluginConfig
-art/arcane/quill/config/WrappedJSONConfiguration.java
- art.arcane.quill.config.WrappedJSONConfiguration
+art/arcane/quill/random/noise/stream/interpolation/TricubicStream.java
+ art.arcane.quill.random.noise.stream.interpolation.TricubicStream
 art/arcane/quill/random/noise/FractalBillowSimplexNoise.java
  art.arcane.quill.random.noise.FractalBillowSimplexNoise
 art/arcane/quill/collections/hunk/storage/AtomicLongHunk.java
  art.arcane.quill.collections.hunk.storage.AtomicLongHunk
 art/arcane/quill/service/IService.java
  art.arcane.quill.service.IService
-art/arcane/quill/plugin/PluginSystem.java
- art.arcane.quill.plugin.PluginSystem
-art/arcane/quill/collections/KList.java
- art.arcane.quill.collections.KList
+art/arcane/quill/random/noise/stream/convert/ConversionStream.java
+ art.arcane.quill.random.noise.stream.convert.ConversionStream
+art/arcane/quill/io/bytetag/SNBTUtil.java
+ art.arcane.quill.io.bytetag.SNBTUtil
 art/arcane/quill/reaction/Observer.java
  art.arcane.quill.reaction.Observer
 art/arcane/quill/reflection/Reflect.java
@@ -327,8 +313,8 @@ art/arcane/quill/collections/vector/Vector3f.java
  art.arcane.quill.collections.vector.Vector3f
 art/arcane/quill/collections/Resolver.java
  art.arcane.quill.collections.Resolver
-art/arcane/quill/execution/Chunker.java
- art.arcane.quill.execution.Chunker
+art/arcane/quill/Quill.java
+ art.arcane.quill.Quill
 art/arcane/quill/math/CappedAverage.java
  art.arcane.quill.math.CappedAverage
 art/arcane/quill/collections/hunk/view/SynchronizedHunkView.java
@@ -341,8 +327,8 @@ art/arcane/quill/io/bytetag/tag/NBTCompoundTag.java
  art.arcane.quill.io.bytetag.tag.NBTCompoundTag
 art/arcane/quill/io/bytetag/NBTRawNamedTag.java
  art.arcane.quill.io.bytetag.NBTRawNamedTag
-art/arcane/quill/io/IO.java
- art.arcane.quill.io.IO
+art/arcane/quill/json/JSONArray.java
+ art.arcane.quill.json.JSONArray
 art/arcane/quill/random/noise/stream/arithmetic/RoundingDoubleStream.java
  art.arcane.quill.random.noise.stream.arithmetic.RoundingDoubleStream
 art/arcane/quill/io/bytetag/tag/NBTLongArrayTag.java
@@ -353,8 +339,8 @@ art/arcane/quill/io/bytetag/NBTRawStringPointer.java
  art.arcane.quill.io.bytetag.NBTRawStringPointer
 art/arcane/quill/random/noise/stream/arithmetic/ClampedStream.java
  art.arcane.quill.random.noise.stream.arithmetic.ClampedStream
-art/arcane/quill/random/noise/CNGFactory.java
- art.arcane.quill.random.noise.CNGFactory
+art/arcane/quill/json/JSONException.java
+ art.arcane.quill.json.JSONException
 art/arcane/quill/random/noise/FastNoise.java
  art.arcane.quill.random.noise.FastNoise
  art.arcane.quill.random.noise.FastNoise$1
@@ -369,8 +355,8 @@ art/arcane/quill/math/AxisAlignedBB.java
  art.arcane.quill.math.AxisAlignedBB
 art/arcane/quill/io/RandomInputStream.java
  art.arcane.quill.io.RandomInputStream
-art/arcane/quill/plugin/ShurikenPlugin.java
- art.arcane.quill.plugin.ShurikenPlugin
+art/arcane/quill/random/noise/stream/convert/ForceDoubleStream.java
+ art.arcane.quill.random.noise.stream.convert.ForceDoubleStream
 art/arcane/quill/collections/hunk/view/RotatedXHunkView.java
  art.arcane.quill.collections.hunk.view.RotatedXHunkView
 art/arcane/quill/json/HTTPTokener.java
@@ -431,8 +417,8 @@ art/arcane/quill/ServiceManager.java
  art.arcane.quill.ServiceManager
 art/arcane/quill/collections/hunk/view/DriftHunkView.java
  art.arcane.quill.collections.hunk.view.DriftHunkView
-art/arcane/quill/collections/KListAdapter.java
- art.arcane.quill.collections.KListAdapter
+art/arcane/quill/random/IRare.java
+ art.arcane.quill.random.IRare
 art/arcane/quill/io/bytetag/SNBTDeserializer.java
  art.arcane.quill.io.bytetag.SNBTDeserializer
 art/arcane/quill/tools/ReflectionTools.java
@@ -452,8 +438,8 @@ art/arcane/quill/io/bytetag/jnbt/ByteArrayTag.java
  art.arcane.quill.io.bytetag.jnbt.ByteArrayTag
 art/arcane/quill/plugin/Plugin.java
  art.arcane.quill.plugin.Plugin
-art/arcane/quill/execution/queue/Queue.java
- art.arcane.quill.execution.queue.Queue
+art/arcane/quill/io/bytetag/SNBTParser.java
+ art.arcane.quill.io.bytetag.SNBTParser
 art/arcane/quill/collections/hunk/io/HunkRegion.java
  art.arcane.quill.collections.hunk.io.HunkRegion
 art/arcane/quill/io/StreamSucker.java
@@ -486,10 +472,10 @@ art/arcane/quill/math/Average.java
  art.arcane.quill.math.Average
 art/arcane/quill/io/bytetag/NBTRawSerializer.java
  art.arcane.quill.io.bytetag.NBTRawSerializer
-art/arcane/quill/collections/LKMap.java
- art.arcane.quill.collections.LKMap
-art/arcane/quill/random/noise/stream/convert/SignificanceStream.java
- art.arcane.quill.random.noise.stream.convert.SignificanceStream
+art/arcane/quill/io/bytetag/jnbt/ShortTag.java
+ art.arcane.quill.io.bytetag.jnbt.ShortTag
+art/arcane/quill/collections/atomics/AtomicDoubleArray.java
+ art.arcane.quill.collections.atomics.AtomicDoubleArray
 art/arcane/quill/random/noise/stream/convert/CachedConversionStream.java
  art.arcane.quill.random.noise.stream.convert.CachedConversionStream
 art/arcane/quill/random/noise/FastNoiseDouble.java
@@ -506,14 +492,14 @@ art/arcane/quill/collections/Contained.java
  art.arcane.quill.collections.Contained
 art/arcane/quill/math/CDou.java
  art.arcane.quill.math.CDou
-art/arcane/quill/random/noise/stream/Significance.java
- art.arcane.quill.random.noise.stream.Significance
+art/arcane/quill/collections/FinalDouble.java
+ art.arcane.quill.collections.FinalDouble
 art/arcane/quill/config/Ignore.java
  art.arcane.quill.config.Ignore
 art/arcane/quill/io/bytetag/jnbt/FloatTag.java
  art.arcane.quill.io.bytetag.jnbt.FloatTag
-art/arcane/quill/execution/queue/QueueExecutor.java
- art.arcane.quill.execution.queue.QueueExecutor
+art/arcane/quill/json/JSONStringer.java
+ art.arcane.quill.json.JSONStringer
 art/arcane/quill/plugin/PluginException.java
  art.arcane.quill.plugin.PluginException
 art/arcane/quill/random/noise/CellGenerator.java
@@ -540,8 +526,8 @@ art/arcane/quill/random/noise/stream/interpolation/BilinearStream.java
  art.arcane.quill.random.noise.stream.interpolation.BilinearStream
 art/arcane/quill/random/noise/GlobNoise.java
  art.arcane.quill.random.noise.GlobNoise
-art/arcane/quill/random/noise/stream/ArraySignificance.java
- art.arcane.quill.random.noise.stream.ArraySignificance
+art/arcane/quill/tools/ObjectTools.java
+ art.arcane.quill.tools.ObjectTools
 art/arcane/quill/random/noise/stream/utility/SynchronizedStream.java
  art.arcane.quill.random.noise.stream.utility.SynchronizedStream
 art/arcane/quill/collections/functional/Consumer7.java
@@ -554,8 +540,8 @@ art/arcane/quill/lang/URLUtils.java
  art.arcane.quill.lang.URLUtils
 art/arcane/quill/random/noise/NoiseGenerator.java
  art.arcane.quill.random.noise.NoiseGenerator
-art/arcane/quill/io/FolderWatcher.java
- art.arcane.quill.io.FolderWatcher
+art/arcane/quill/io/bytetag/NBTInputStream.java
+ art.arcane.quill.io.bytetag.NBTInputStream
 art/arcane/quill/random/noise/stream/arithmetic/AddingStream.java
  art.arcane.quill.random.noise.stream.arithmetic.AddingStream
 art/arcane/quill/collections/hunk/view/RotatedYHunkView.java
@@ -567,8 +553,8 @@ art/arcane/quill/tools/CharAESTools.java
  art.arcane.quill.tools.CharAESTools$PrngFixes$LinuxPRNGSecureRandom
  art.arcane.quill.tools.CharAESTools$PrngFixes$LinuxPRNGSecureRandomProvider
  art.arcane.quill.tools.CharAESTools$SecretKeys
-art/arcane/quill/config/Configurator.java
- art.arcane.quill.config.Configurator
+art/arcane/quill/collections/FinalFloat.java
+ art.arcane.quill.collections.FinalFloat
 art/arcane/quill/io/bytetag/NBTRawExceptionBiFunction.java
  art.arcane.quill.io.bytetag.NBTRawExceptionBiFunction
 art/arcane/quill/tools/Desc.java
@@ -591,8 +577,8 @@ art/arcane/quill/io/bytetag/tag/NBTByteArrayTag.java
  art.arcane.quill.io.bytetag.tag.NBTByteArrayTag
 art/arcane/quill/random/noise/OctaveNoise.java
  art.arcane.quill.random.noise.OctaveNoise
-art/arcane/quill/random/noise/CNG.java
- art.arcane.quill.random.noise.CNG
+art/arcane/quill/random/noise/stream/interpolation/TriStarcastStream.java
+ art.arcane.quill.random.noise.stream.interpolation.TriStarcastStream
 art/arcane/quill/collections/hunk/io/BasicHunkIOAdapter.java
  art.arcane.quill.collections.hunk.io.BasicHunkIOAdapter
 art/arcane/quill/random/noise/stream/utility/ProfiledStream.java
@@ -619,8 +605,8 @@ art/arcane/quill/config/Comment.java
  art.arcane.quill.config.Comment
 art/arcane/quill/collections/hunk/io/BooleanHunkIOAdapter.java
  art.arcane.quill.collections.hunk.io.BooleanHunkIOAdapter
-art/arcane/quill/collections/CacheMap.java
- art.arcane.quill.collections.CacheMap
+art/arcane/quill/random/noise/stream/convert/AwareConversionStream3D.java
+ art.arcane.quill.random.noise.stream.convert.AwareConversionStream3D
 art/arcane/quill/math/PSW.java
  art.arcane.quill.math.PSW
 art/arcane/quill/collections/functional/Consumer4.java
@@ -645,8 +631,8 @@ art/arcane/quill/collections/point/Point4d.java
  art.arcane.quill.collections.point.Point4d
 art/arcane/quill/tools/HasteBin.java
  art.arcane.quill.tools.HasteBin
-art/arcane/quill/lang/Alphabet.java
- art.arcane.quill.lang.Alphabet
+art/arcane/quill/collections/hunk/io/HunkIOAdapter.java
+ art.arcane.quill.collections.hunk.io.HunkIOAdapter
 art/arcane/quill/random/noise/stream/utility/NullSafeStream.java
  art.arcane.quill.random.noise.stream.utility.NullSafeStream
 art/arcane/quill/io/bytetag/jnbt/IntTag.java
@@ -688,85 +674,99 @@ art/arcane/quill/collections/hunk/storage/AtomicIntegerHunk.java
  art.arcane.quill.collections.hunk.storage.AtomicIntegerHunk
 art/arcane/quill/events/EventTarget.java
  art.arcane.quill.events.EventTarget
-art/arcane/quill/tools/JarTools.java
- art.arcane.quill.tools.JarTools
-art/arcane/quill/json/JSONStringer.java
- art.arcane.quill.json.JSONStringer
-art/arcane/quill/random/noise/stream/interpolation/TriStarcastStream.java
- art.arcane.quill.random.noise.stream.interpolation.TriStarcastStream
-art/arcane/quill/collections/FinalDouble.java
- art.arcane.quill.collections.FinalDouble
-art/arcane/quill/random/noise/NoiseFactory.java
- art.arcane.quill.random.noise.NoiseFactory
+art/arcane/quill/execution/Chunker.java
+ art.arcane.quill.execution.Chunker
+art/arcane/quill/execution/queue/TaskExecutor.java
+ art.arcane.quill.execution.queue.TaskExecutor
+ art.arcane.quill.execution.queue.TaskExecutor$1
+ art.arcane.quill.execution.queue.TaskExecutor$AssignedTask
+ art.arcane.quill.execution.queue.TaskExecutor$TaskGroup
+ art.arcane.quill.execution.queue.TaskExecutor$TaskResult
+ art.arcane.quill.execution.queue.TaskExecutor$TaskState
 art/arcane/quill/random/noise/NoiseStyle.java
  art.arcane.quill.random.noise.NoiseStyle
-art/arcane/quill/collections/atomics/AtomicDoubleArray.java
- art.arcane.quill.collections.atomics.AtomicDoubleArray
-art/arcane/quill/io/bytetag/jnbt/ShortTag.java
- art.arcane.quill.io.bytetag.jnbt.ShortTag
-art/arcane/quill/collections/Adapter.java
- art.arcane.quill.collections.Adapter
-art/arcane/quill/io/bytetag/SNBTUtil.java
- art.arcane.quill.io.bytetag.SNBTUtil
-art/arcane/quill/random/noise/stream/convert/ConversionStream.java
- art.arcane.quill.random.noise.stream.convert.ConversionStream
-art/arcane/quill/random/noise/stream/interpolation/TricubicStream.java
- art.arcane.quill.random.noise.stream.interpolation.TricubicStream
-art/arcane/quill/tools/BlackMagicException.java
- art.arcane.quill.tools.BlackMagicException
-art/arcane/quill/collections/FinalFloat.java
- art.arcane.quill.collections.FinalFloat
-art/arcane/quill/tools/ObjectTools.java
- art.arcane.quill.tools.ObjectTools
-art/arcane/quill/collections/functional/ConsumerNasty2.java
- art.arcane.quill.collections.functional.ConsumerNasty2
-art/arcane/quill/io/bytetag/NBTInputStream.java
- art.arcane.quill.io.bytetag.NBTInputStream
-art/arcane/quill/collections/functional/Callback.java
- art.arcane.quill.collections.functional.Callback
-art/arcane/quill/random/noise/stream/arithmetic/DividingStream.java
- art.arcane.quill.random.noise.stream.arithmetic.DividingStream
-art/arcane/quill/collections/hunk/io/HunkIOAdapter.java
- art.arcane.quill.collections.hunk.io.HunkIOAdapter
-art/arcane/quill/random/noise/stream/convert/ForceDoubleStream.java
- art.arcane.quill.random.noise.stream.convert.ForceDoubleStream
-art/arcane/quill/collections/hunk/view/RotatedZHunkView.java
- art.arcane.quill.collections.hunk.view.RotatedZHunkView
-art/arcane/quill/random/noise/SimplexNoise.java
- art.arcane.quill.random.noise.SimplexNoise
-art/arcane/quill/config/Writable.java
- art.arcane.quill.config.Writable
-art/arcane/quill/io/bytetag/NBTRawStringSerializer.java
- art.arcane.quill.io.bytetag.NBTRawStringSerializer
-art/arcane/quill/collections/hunk/view/InvertedHunkView.java
- art.arcane.quill.collections.hunk.view.InvertedHunkView
-art/arcane/quill/io/bytetag/SNBTParser.java
- art.arcane.quill.io.bytetag.SNBTParser
-art/arcane/quill/json/JSONException.java
- art.arcane.quill.json.JSONException
-art/arcane/quill/collections/point/Point3d.java
- art.arcane.quill.collections.point.Point3d
+art/arcane/quill/collections/KListAdapter.java
+ art.arcane.quill.collections.KListAdapter
+art/arcane/quill/collections/KListRoundRobin.java
+ art.arcane.quill.collections.KListRoundRobin
+art/arcane/quill/random/WeightMap.java
+ art.arcane.quill.random.WeightMap
+art/arcane/quill/collections/CacheMap.java
+ art.arcane.quill.collections.CacheMap
+art/arcane/quill/config/ConfigWrapper.java
+ art.arcane.quill.config.ConfigWrapper
+art/arcane/quill/math/IrisInterpolation.java
+ art.arcane.quill.math.IrisInterpolation
+art/arcane/quill/io/IO.java
+ art.arcane.quill.io.IO
+art/arcane/quill/tools/ExceptionTools.java
+ art.arcane.quill.tools.ExceptionTools
+art/arcane/quill/random/noise/stream/ArraySignificance.java
+ art.arcane.quill.random.noise.stream.ArraySignificance
+art/arcane/quill/execution/queue/ShurikenQueue.java
+ art.arcane.quill.execution.queue.ShurikenQueue
+art/arcane/quill/random/noise/CNGFactory.java
+ art.arcane.quill.random.noise.CNGFactory
+art/arcane/quill/execution/queue/Queue.java
+ art.arcane.quill.execution.queue.Queue
+art/arcane/quill/collections/DataPalette.java
+ art.arcane.quill.collections.DataPalette
+art/arcane/quill/collections/WeakKMap.java
+ art.arcane.quill.collections.WeakKMap
+ art.arcane.quill.collections.WeakKMap$1
+ art.arcane.quill.collections.WeakKMap$2
+ art.arcane.quill.collections.WeakKMap$3
+ art.arcane.quill.collections.WeakKMap$4
+art/arcane/quill/random/noise/RarityCellGenerator.java
+ art.arcane.quill.random.noise.RarityCellGenerator
+art/arcane/quill/collections/KMap.java
+ art.arcane.quill.collections.KMap
+ art.arcane.quill.collections.KMap$1
+ art.arcane.quill.collections.KMap$2
+ art.arcane.quill.collections.KMap$3
+ art.arcane.quill.collections.KMap$4
+art/arcane/quill/logging/L.java
+ art.arcane.quill.logging.L
+ art.arcane.quill.logging.L$1
+art/arcane/quill/plugin/ShurikenPlugin.java
+ art.arcane.quill.plugin.ShurikenPlugin
+art/arcane/quill/lang/Alphabet.java
+ art.arcane.quill.lang.Alphabet
+art/arcane/quill/random/noise/stream/sources/CNGStream.java
+ art.arcane.quill.random.noise.stream.sources.CNGStream
+art/arcane/quill/lang/AlphabetRange.java
+ art.arcane.quill.lang.AlphabetRange
+art/arcane/quill/io/FolderWatcher.java
+ art.arcane.quill.io.FolderWatcher
+art/arcane/quill/collections/hunk/storage/MappedHunk.java
+ art.arcane.quill.collections.hunk.storage.MappedHunk
 art/arcane/quill/collections/RoundRobin.java
  art.arcane.quill.collections.RoundRobin
-art/arcane/quill/random/noise/CellularNoise.java
- art.arcane.quill.random.noise.CellularNoise
-art/arcane/quill/json/JSONArray.java
- art.arcane.quill.json.JSONArray
-art/arcane/quill/collections/vector/Vector2d.java
- art.arcane.quill.collections.vector.Vector2d
-art/arcane/quill/maven/MavenArtifact.java
- art.arcane.quill.maven.MavenArtifact
-art/arcane/quill/random/noise/stream/convert/AwareConversionStream3D.java
- art.arcane.quill.random.noise.stream.convert.AwareConversionStream3D
-art/arcane/quill/io/BPatch.java
- art.arcane.quill.io.BPatch
-art/arcane/quill/collections/functional/Function3.java
- art.arcane.quill.collections.functional.Function3
-art/arcane/quill/random/IRare.java
- art.arcane.quill.random.IRare
+art/arcane/quill/config/Configurator.java
+ art.arcane.quill.config.Configurator
+art/arcane/quill/collections/NetCache.java
+ art.arcane.quill.collections.NetCache
+art/arcane/quill/config/WrappedJSONConfiguration.java
+ art.arcane.quill.config.WrappedJSONConfiguration
+art/arcane/quill/plugin/PluginSystem.java
+ art.arcane.quill.plugin.PluginSystem
+art/arcane/quill/collections/KList.java
+ art.arcane.quill.collections.KList
 art/arcane/quill/config/Props.java
  art.arcane.quill.config.Props
-art/arcane/quill/SVC.java
- art.arcane.quill.SVC
-art/arcane/quill/Quill.java
- art.arcane.quill.Quill
+art/arcane/quill/collections/LKMap.java
+ art.arcane.quill.collections.LKMap
+art/arcane/quill/random/noise/stream/convert/SignificanceStream.java
+ art.arcane.quill.random.noise.stream.convert.SignificanceStream
+art/arcane/quill/collections/StateList.java
+ art.arcane.quill.collections.StateList
+art/arcane/quill/plugin/ShurikenPluginSystem.java
+ art.arcane.quill.plugin.ShurikenPluginSystem
+art/arcane/quill/random/noise/stream/Significance.java
+ art.arcane.quill.random.noise.stream.Significance
+art/arcane/quill/random/noise/CNG.java
+ art.arcane.quill.random.noise.CNG
+art/arcane/quill/execution/queue/QueueExecutor.java
+ art.arcane.quill.execution.queue.QueueExecutor
+art/arcane/quill/tools/JarTools.java
+ art.arcane.quill.tools.JarTools

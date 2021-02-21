@@ -1,0 +1,77 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "art.arcane",
+    "module": "quill",
+    "version": "1.0.4",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.7",
+      "buildId": "332zkv4s4vgmfl6vh2hh3ej7le"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 15,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "quill-1.0.4.jar",
+          "url": "quill-1.0.4.jar",
+          "size": 662908,
+          "sha512": "b544101f38f7746eeb043248717deef7a6750eb92bf476f4074be7f00d83315d99fde2b1c8269fce1c5f85d920a24e80003952ab649be9e1800ae633037faa98",
+          "sha256": "2e732213721a9f110b60cd8d9516c96bddd0c3c87bd3e3ab10cd9660c34ea8cd",
+          "sha1": "8cf96010f4105c0e132ef023560038882fe689a1",
+          "md5": "8981fe2ea842cf923cf01d2ea672b38c"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 15,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.6"
+          }
+        },
+        {
+          "group": "com.github.ben-manes.caffeine",
+          "module": "caffeine",
+          "version": {
+            "requires": "2.8.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "quill-1.0.4.jar",
+          "url": "quill-1.0.4.jar",
+          "size": 662908,
+          "sha512": "b544101f38f7746eeb043248717deef7a6750eb92bf476f4074be7f00d83315d99fde2b1c8269fce1c5f85d920a24e80003952ab649be9e1800ae633037faa98",
+          "sha256": "2e732213721a9f110b60cd8d9516c96bddd0c3c87bd3e3ab10cd9660c34ea8cd",
+          "sha1": "8cf96010f4105c0e132ef023560038882fe689a1",
+          "md5": "8981fe2ea842cf923cf01d2ea672b38c"
+        }
+      ]
+    }
+  ]
+}
