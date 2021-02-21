@@ -39,4 +39,9 @@ public class KListRoundRobin<T> implements RoundRobin<T> {
 
         return data.getOrNull(index);
     }
+
+    @Override
+    public KList<T> list() {
+        return data;
+    }
 }
