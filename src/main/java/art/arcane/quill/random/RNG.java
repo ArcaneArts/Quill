@@ -8,6 +8,7 @@ import java.util.UUID;
 public class RNG extends Random
 {
 	private static final char[] CHARGEN = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-=!@#$%^&*()_+`~[];',./<>?:\\\"{}|\\\\".toCharArray();
+	private static final char[] CHARGEN_SAFE = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-".toCharArray();
 	private static final long serialVersionUID = 5222938581174415179L;
 	public static final RNG r = new RNG();
 	private final long sx;
@@ -68,9 +69,26 @@ public class RNG extends Random
 		return sb.toString();
 	}
 
+	public String sSafe(int length)
+	{
+		StringBuilder sb = new StringBuilder();
+
+		for(int i = 0; i < length; i++)
+		{
+			sb.append(cSafe());
+		}
+
+		return sb.toString();
+	}
+
 	public char c()
 	{
 		return CHARGEN[i(CHARGEN.length - 1)];
+	}
+
+	public char cSafe()
+	{
+		return CHARGEN_SAFE[i(CHARGEN_SAFE.length - 1)];
 	}
 
 	/**
