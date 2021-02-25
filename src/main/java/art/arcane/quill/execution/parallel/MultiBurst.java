@@ -15,23 +15,29 @@ public class MultiBurst
 
 	public MultiBurst(int tc)
 	{
-		service = Executors.newFixedThreadPool(tc, new ThreadFactory()
-		{
-			@Override
-			public Thread newThread(Runnable r)
+		service = tc == 1 ? Executors.newSingleThreadExecutor(r -> {
+			Thread t = new Thread(r);
+			t.setName("Quill Burst Executor (SC)");
+			t.setPriority(Thread.MAX_PRIORITY);
+			t.setUncaughtExceptionHandler((et, e) ->
 			{
-				tid++;
-				Thread t = new Thread(r);
-				t.setName("Shuriken Burst Executor " + tid);
-				t.setPriority(Thread.MAX_PRIORITY);
-				t.setUncaughtExceptionHandler((et, e) ->
-				{
-					L.f("Exception encountered in " + et.getName());
-					L.ex(e);
-				});
+				L.f("Exception encountered in " + et.getName());
+				L.ex(e);
+			});
 
-				return t;
-			}
+			return t;
+		}) : Executors.newFixedThreadPool(tc, r -> {
+			tid++;
+			Thread t = new Thread(r);
+			t.setName("Quill Burst Executor " + tid);
+			t.setPriority(Thread.MAX_PRIORITY);
+			t.setUncaughtExceptionHandler((et, e) ->
+			{
+				L.f("Exception encountered in " + et.getName());
+				L.ex(e);
+			});
+
+			return t;
 		});
 	}
 

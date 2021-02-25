@@ -20,7 +20,7 @@ public class J
 		{
 			tid++;
 			Thread t = new Thread(r);
-			t.setName("Actuator " + tid);
+			t.setName("Quill Worker " + tid);
 			t.setPriority(Thread.MIN_PRIORITY);
 			t.setUncaughtExceptionHandler((et, e) -> {
 				L.f("Exception encountered in " + et.getName());
