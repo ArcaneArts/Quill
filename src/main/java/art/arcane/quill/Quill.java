@@ -1,19 +1,92 @@
 package art.arcane.quill;
 
+import art.arcane.quill.execution.J;
+import art.arcane.quill.logging.L;
 import art.arcane.quill.math.Profiler;
+import art.arcane.quill.service.QuillService;
 import art.arcane.quill.service.IService;
-
 import java.lang.reflect.InvocationTargetException;
 
 public class Quill
 {
+	public static Class<? extends QuillService> delegateClass = null;
+	public static QuillService delegate = null;
 	public static String DIR = System.getenv("APPDATA") + "/Shuriken";
 	public static final Profiler profiler = new Profiler();
 	public static final ServiceManager serviceManager = new ServiceManager();
 
-	public static void main(String[] a) throws Throwable
-	{
-		
+	public static void start(String[] a) {
+		for (StackTraceElement i : Thread.currentThread().getStackTrace()) {
+			try {
+				Class<? extends QuillService> s = (Class<? extends QuillService>) Class.forName(i.getClassName());
+				if (QuillService.class.isAssignableFrom(s)) {
+					start(s, a);
+					return;
+				}
+			} catch (Throwable e) {
+				L.ex(e);
+				L.f("Failed to find a service to start from!");
+			}
+		}
+	}
+
+	public static void start(Class<? extends QuillService> service, String[] a) {
+		if (delegate != null) {
+			crashStack("Service attempted to start when an existing delegate was already running!");
+			return;
+		}
+
+		try {
+			delegateClass = service;
+			delegate = QuillService.initializeConfigured(service);
+			assert delegate != null;
+		} catch (Throwable e) {
+			L.ex(e);
+			crash("Failed to initialize Chimera Service Delegate Class");
+			return;
+		}
+
+		try {
+			delegate.startService();
+		} catch (Throwable e) {
+			L.ex(e);
+			crash("Failed to start Chimera Service Delegate onEnable");
+			return;
+		}
+
+		Runtime.getRuntime().addShutdownHook(new Thread(Quill::shutdown));
+	}
+
+	public static void shutdown() {
+		try {
+			delegate.stopService();
+		} catch (Throwable e) {
+			L.ex(e);
+		}
+
+		delegateClass = null;
+		delegate = null;
+		L.flush();
+		System.exit(0);
+	}
+
+	public static void crash() {
+		crash("¯\\_(ツ)_/¯");
+	}
+
+	public static void crashStack(String message) {
+		J.printStack(message);
+		crash(message);
+	}
+
+	public static void crash(String message) {
+		L.f("Chimera Service Crash: " + message);
+		L.flush();
+		System.exit(1);
+	}
+
+	public static String getDelegateModuleName() {
+		return delegateClass.getCanonicalName().split("\\Q.\\E")[3];
 	}
 
 	public static <T extends IService> T getService(Class<? extends T> c)

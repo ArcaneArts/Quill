@@ -13,22 +13,17 @@ import java.util.function.Supplier;
 public class J
 {
 	private static int tid = 0;
-	private static final ExecutorService e = Executors.newCachedThreadPool(new ThreadFactory()
-	{
-		@Override
-		public Thread newThread(Runnable r)
-		{
-			tid++;
-			Thread t = new Thread(r);
-			t.setName("Quill Worker " + tid);
-			t.setPriority(Thread.MIN_PRIORITY);
-			t.setUncaughtExceptionHandler((et, e) -> {
-				L.f("Exception encountered in " + et.getName());
-				L.ex(e);
-			});
-			
-			return t;
-		}
+	private static final ExecutorService e = Executors.newCachedThreadPool(r -> {
+		tid++;
+		Thread t = new Thread(r);
+		t.setName("Quill Worker " + tid);
+		t.setPriority(Thread.MIN_PRIORITY);
+		t.setUncaughtExceptionHandler((et, e) -> {
+			L.f("Exception encountered in " + et.getName());
+			L.ex(e);
+		});
+
+		return t;
 	});
 	
 	public static void dofor(int a, Function<Integer, Boolean> c, int ch, Consumer<Integer> d)
@@ -48,6 +43,17 @@ public class J
 		}
 		
 		return false;
+	}
+
+	public static void printStack(String msg)
+	{
+		try
+		{
+			throw new RuntimeException(msg);
+		} catch (Throwable e)
+		{
+			L.ex(e);
+		}
 	}
 	
 	public static void a(Runnable a)

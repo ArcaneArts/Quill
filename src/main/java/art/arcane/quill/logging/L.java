@@ -14,7 +14,8 @@ import java.util.function.Consumer;
 
 public class L
 {
-	private static final L l = new L();
+	public static boolean VERBOSE = true;
+    private static final L l = new L();
 	private static String lastTag = "";
 	private static Looper looper;
 	private static Queue<String> logBuffer;
@@ -76,6 +77,11 @@ public class L
 
 	protected void verbose(Object... l)
 	{
+		if(!VERBOSE)
+		{
+			return;
+		}
+
 		log("V", l);
 	}
 
