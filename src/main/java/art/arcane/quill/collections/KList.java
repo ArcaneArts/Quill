@@ -115,6 +115,18 @@ public class KList<T> extends ArrayList<T> implements List<T>
 		return new Chunker<T>(this);
 	}
 
+	public KList<T> filter(Function<T, Boolean> f) {
+		KList<T> t = new KList<>();
+
+		for (T i : this) {
+			if (f.apply(i)) {
+				t.add(i);
+			}
+		}
+
+		return t;
+	}
+
 	/**
 	 * Remove the last element
 	 */
