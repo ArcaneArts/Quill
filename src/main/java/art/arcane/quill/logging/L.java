@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class L
 {
 	public static boolean VERBOSE = true;
-    private static final L l = new L();
+     private static final L l = new L();
 	private static String lastTag = "";
 	private static Looper looper;
 	private static Queue<String> logBuffer;
@@ -28,6 +28,14 @@ public class L
 	public static void clearLogConsumers()
 	{
 		logConsumers.clear();
+	}
+
+	public static void pss() {
+		try {
+			throw new RuntimeException("Stack Trace");
+		} catch (Throwable e) {
+			L.ex(e);
+		}
 	}
 	
 	public static void addLogConsumer(Consumer<String> m)
