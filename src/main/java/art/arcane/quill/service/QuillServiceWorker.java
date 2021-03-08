@@ -1,6 +1,7 @@
 package art.arcane.quill.service;
 
 import art.arcane.quill.Quill;
+import art.arcane.quill.collections.KList;
 import art.arcane.quill.format.Form;
 import art.arcane.quill.logging.L;
 import com.google.gson.InstanceCreator;
@@ -32,6 +33,75 @@ public abstract class QuillServiceWorker {
         this.enabled = false;
     }
 
+    /**
+     * Recursivley walks up the service tree this worker is branched on, attempting to force-cast every service field to the return result (generic t)
+     * @param <T> A service worker
+     * @return The first found service
+     */
+    public <T extends QuillServiceWorker> T firstParentService()
+    {
+        for(QuillServiceWorker i : getChildServices())
+        {
+            try
+            {
+                return (T) i;
+            }
+
+            catch(Throwable ignored)
+            {
+
+            }
+        }
+
+        if(hasParent())
+        {
+            return getParent().firstParentService();
+        }
+
+        return null;
+    }
+
+    /**
+     * Recursivley walks down the service tree this worker is branched on, attempting to force-cast every service field to the return result (generic t)
+     * @param <T> A service worker
+     * @return The first found service
+     */
+    public <T extends QuillServiceWorker> T firstChildService()
+    {
+        for(QuillServiceWorker i : getChildServices())
+        {
+            try
+            {
+                return (T) i;
+            }
+
+            catch(Throwable ignored)
+            {
+
+            }
+        }
+
+        for(QuillServiceWorker i : getChildServices())
+        {
+            try
+            {
+                T t = i.firstChildService();
+
+                if(t != null)
+                {
+                    return t;
+                }
+            }
+
+            catch(Throwable ignored)
+            {
+
+            }
+        }
+
+        return null;
+    }
+
     public QuillServiceWorker getRawService(String field) {
         try {
             Field f = getClass().getDeclaredField(field);
@@ -43,6 +113,30 @@ public abstract class QuillServiceWorker {
         }
 
         return null;
+    }
+
+    public KList<QuillServiceWorker> getChildServices()
+    {
+        KList<QuillServiceWorker> qsw = new KList<>();
+
+        for (Field i : getAllFields(getClass())) {
+            try {
+                if (i.isAnnotationPresent(ServiceWorker.class)) {
+                    i.setAccessible(true);
+                    QuillServiceWorker sw = (QuillServiceWorker) i.get(this);
+
+                    if(sw != null)
+                    {
+                        qsw.add(sw);
+                    }
+                }
+            } catch (Throwable ignored) {
+
+
+            }
+        }
+
+        return qsw;
     }
 
     public boolean hasParent() {
