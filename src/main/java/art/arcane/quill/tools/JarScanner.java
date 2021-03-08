@@ -60,9 +60,9 @@ public class JarScanner
 						classes.add(clazz);
 					}
 
-					catch(ClassNotFoundException e)
+					catch(Throwable e)
 					{
-						L.ex(e);
+
 					}
 				}
 			}
