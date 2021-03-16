@@ -14,6 +14,8 @@ public class Quill
 	public static String DIR = System.getenv("APPDATA") + "/Shuriken";
 	public static final Profiler profiler = new Profiler();
 	public static final ServiceManager serviceManager = new ServiceManager();
+	private static boolean gracefulShutdown = false;
+	private static boolean shutdownHooks = false;
 
 	public static void start(String[] a) {
 		for (StackTraceElement i : Thread.currentThread().getStackTrace()) {
@@ -54,7 +56,31 @@ public class Quill
 			return;
 		}
 
-		Runtime.getRuntime().addShutdownHook(new Thread(Quill::shutdown));
+		if(!shutdownHooks)
+		{
+			shutdownHooks = true;
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				if(!gracefulShutdown)
+				{
+					L.w("Non-Graceful shutdown detected... (are we crashing?) Attempting to shutdown properly");
+					try
+					{
+						shutdown();
+					}
+
+					catch(Throwable e)
+					{
+						L.ex(e);
+					}
+				}
+
+				else
+				{
+					L.i(Quill.delegateClass.getSimpleName() + " has Gracefully Shutdown");
+				}
+				L.flush();
+			}));
+		}
 	}
 
 	public static void shutdown() {
@@ -64,9 +90,8 @@ public class Quill
 			L.ex(e);
 		}
 
-		delegateClass = null;
-		delegate = null;
 		L.flush();
+		gracefulShutdown = true;
 		System.exit(0);
 	}
 

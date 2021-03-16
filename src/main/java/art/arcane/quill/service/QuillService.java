@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -26,12 +27,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Represents a basic service of Quill. Each JVM typically has one service.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class QuillService {
+public abstract class QuillService extends QuillServiceWorker {
     private transient final String serviceName;
     private transient ExecutorService sparkplugs;
     private transient boolean failing;
-    private transient final InstanceCreator<QuillService> instanceCreator;
+    private transient final InstanceCreator<QuillService> serviceInstanceCreator;
     private transient final Gson configGson;
 
     /**
@@ -45,11 +47,11 @@ public abstract class QuillService {
         Thread.currentThread().setName("Quill " + getServiceName());
         sparkplugs = null;
         failing = false;
-        instanceCreator = type -> this;
+        serviceInstanceCreator = type -> this;
         KMap<Class<?>, InstanceCreator<?>> c = new KMap<>();
 
         configGson = new GsonBuilder()
-                .registerTypeAdapter(Quill.delegateClass, instanceCreator)
+                .registerTypeAdapter(Quill.delegateClass, serviceInstanceCreator)
                 .create();
         //@done
     }
@@ -194,6 +196,7 @@ public abstract class QuillService {
                     i.set(o, sw);
                 }
 
+                sw.setParent(this);
                 sw.setServiceDepth(1);
                 try {
                     sw.start();
@@ -241,16 +244,6 @@ public abstract class QuillService {
         L.w("Attempting to disable if possible...");
         J.attempt(() -> onDisable());
     }
-
-    /**
-     * This is called after all of the sub-service workers have been enabled. As a service, this is the last stage to initialize your components that are not service workers. You can also use asyncInit(Runnable) to initialize in parallel.
-     */
-    public abstract void onEnable();
-
-    /**
-     * This is called BEFORE all sub-service workers have been disabled. As a service this is typically the first stage in shutdown.
-     */
-    public abstract void onDisable();
 
     protected static List<Field> getAllFields(Class<?> aClass) {
         List<Field> fields = new ArrayList<>();
