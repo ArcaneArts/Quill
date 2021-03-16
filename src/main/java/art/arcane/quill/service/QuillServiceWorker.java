@@ -40,6 +40,23 @@ public abstract class QuillServiceWorker {
      */
     public <T extends QuillServiceWorker> T firstParentService()
     {
+        return firstParentService(false);
+    }
+
+    /**
+     * Recursivley walks up the service tree this worker is branched on, attempting to force-cast every service field to the return result (generic t)
+     * @param <T> A service worker
+     * @param debug If enabled failed results will print their search paths (defaults to false). Creates a lot of garbage if used for everything so be aware.
+     * @return The first found service
+     */
+    public <T extends QuillServiceWorker> T firstParentService(boolean debug)
+    {
+        KList<String> v = debug ? new KList<>() : null;
+        return firstParentService(v);
+    }
+
+    public <T extends QuillServiceWorker> T firstParentService(KList<String> debugging)
+    {
         for(QuillServiceWorker i : getChildServices())
         {
             try
@@ -49,13 +66,32 @@ public abstract class QuillServiceWorker {
 
             catch(Throwable ignored)
             {
-
+                if(debugging != null)
+                {
+                    debugging.add("? " + i.getName() + " (" + i.getClass().getSimpleName() + ")");
+                }
             }
         }
 
         if(hasParent())
         {
-            return getParent().firstParentService();
+            if(debugging != null)
+            {
+                debugging.add("? /\\ (" + getParent().getName() + " (" + getParent().getClass().getSimpleName() + "))");
+            }
+
+            return getParent().firstParentService(debugging);
+        }
+
+        if(debugging != null)
+        {
+            L.f("=================================================");
+            L.flush();
+            L.f("Unable to find parent worker");
+            L.f("SEARCH PATH: ");
+            debugging.forEach((i) -> L.f("  " + i));
+            L.f("=================================================");
+            L.flush();
         }
 
         return null;
