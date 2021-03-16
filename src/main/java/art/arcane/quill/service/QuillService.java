@@ -2,8 +2,8 @@ package art.arcane.quill.service;
 
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
-import art.arcane.quill.collections.KMap;
 import art.arcane.quill.execution.J;
+import art.arcane.quill.format.Form;
 import art.arcane.quill.io.IO;
 import art.arcane.quill.json.JSONObject;
 import art.arcane.quill.logging.L;
@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -23,38 +22,220 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Represents a basic service of Quill. Each JVM typically has one service.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class QuillService extends QuillServiceWorker {
+public abstract class QuillService implements IService {
     private transient final String serviceName;
+    private transient final AtomicBoolean duringInit;
     private transient ExecutorService sparkplugs;
-    private transient boolean failing;
-    private transient final InstanceCreator<QuillService> serviceInstanceCreator;
-    private transient final Gson configGson;
+    private transient final InstanceCreator<IService> serviceInstanceCreator;
+    private transient Gson configGson;
+    private transient int serviceId = Quill.serviceIds++;
+    private transient int serviceDepth = 0;
+    private transient boolean enabled;
+    private transient IService parent;
 
-    /**
-     * A service must have a service name (capitalization is suggested)
-     *
-     * @param serviceName the fancy service name that will run on this jvm
-     */
-    public QuillService(String serviceName) {
-        //@builder
-        this.serviceName = serviceName;
-        Thread.currentThread().setName("Quill " + getServiceName());
+    public QuillService() {
+        this.serviceName = getClass().getSimpleName().replaceAll("\\QService\\E", "").replaceAll("\\QWorker\\E", "").replaceAll("\\QSVC\\E", "");
         sparkplugs = null;
-        failing = false;
+        this.enabled = false;
         serviceInstanceCreator = type -> this;
-        KMap<Class<?>, InstanceCreator<?>> c = new KMap<>();
-
-        configGson = new GsonBuilder()
-                .registerTypeAdapter(Quill.delegateClass, serviceInstanceCreator)
-                .create();
-        //@done
+        setServiceDepth(0);
+        duringInit = new AtomicBoolean(false);
     }
+
+    private static String toString(Object... l)
+    {
+        if(l.length == 1)
+        {
+            return (l[0] != null ? l[0].toString() : "null");
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for(Object i : l)
+        {
+            sb.append(i == null ? "null" : i.toString());
+            sb.append(" ");
+        }
+
+        return sb.toString();
+    }
+
+    public void i(Object...v)
+    {
+        L.i((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+    }
+
+    public void v(Object...v)
+    {
+        L.v((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+    }
+
+    public void w(Object...v)
+    {
+        L.w((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+    }
+
+    public void f(Object...v)
+    {
+        L.f((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+    }
+
+    public IService getRawService(String field) {
+        try {
+            Field f = getClass().getDeclaredField(field);
+            f.setAccessible(true);
+            return (IService) f.get(this);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            L.ex(e);
+            Quill.crash("Failed to obtain subservice worker in service worker");
+        }
+
+        return null;
+    }
+
+    public KList<IService> getChildServices()
+    {
+        KList<IService> qsw = new KList<>();
+
+        for (Field i : getAllFields(getClass())) {
+            try {
+                if (i.isAnnotationPresent(Service.class)) {
+                    i.setAccessible(true);
+                    IService sw = (IService) i.get(this);
+
+                    if(sw != null)
+                    {
+                        qsw.add(sw);
+                    }
+                }
+            } catch (Throwable ignored) {
+
+
+            }
+        }
+
+        return qsw;
+    }
+
+    public boolean hasParent() {
+        return getParent() != null;
+    }
+
+    public String getName() {
+        return getClass().getSimpleName();
+    }
+
+    public void start() {
+        if (enabled) {
+            Quill.crashStack("Service Worker " + getName() + " was already running!");
+        }
+
+        try {
+            L.i(Form.repeat("  ", serviceDepth) + "Starting " + getName() + " Service Worker");
+
+            for (Field i : getAllFields(getClass())) {
+                enableServiceWorker(i);
+            }
+
+            duringInit.set(true);
+            onEnable();
+            duringInit.set(false);
+            L.i(Form.repeat("  ", serviceDepth) + "Started " + getName() + " Service Worker");
+            enabled = true;
+        } catch (Throwable e) {
+            L.ex(e);
+            Quill.crash("Failed to enable " + getName());
+        }
+    }
+
+    public void stop() {
+        if (!enabled) {
+            return;
+        }
+
+        try {
+            L.i(Form.repeat("  ", serviceDepth) + "Stopping " + getName() + " Service Worker");
+            onDisable();
+
+            for (Field i : getAllFields(getClass())) {
+                disableServiceWorker(i);
+            }
+
+            L.i(Form.repeat("  ", serviceDepth) + "Stopped " + getName() + " Service Worker");
+            enabled = false;
+        } catch (Throwable e) {
+            L.ex(e);
+            Quill.crash("Failed to disable " + getName());
+        }
+    }
+
+    protected void enableServiceWorker(Field i) {
+        enableServiceWorker(i, this);
+    }
+
+    protected void enableServiceWorker(Field i, Object o) {
+        if (i.isAnnotationPresent(Service.class)) {
+            i.setAccessible(true);
+            Class<? extends IService> worker = (Class<? extends IService>) i.getType();
+
+            try {
+                IService sw = (IService) i.get(o);
+
+                if(sw == null)
+                {
+                    sw = (IService) i.getType().getConstructor().newInstance();
+                    i.set(o, sw);
+                }
+
+                sw.setServiceDepth(getServiceDepth() + 1);
+                sw.setParent(this);
+                try {
+                    sw.start();
+                } catch (Throwable ex) {
+                    L.ex(ex);
+                    Quill.crash("Failed to enable service worker " + worker.getCanonicalName());
+                }
+            } catch (Throwable e) {
+                L.ex(e);
+                Quill.crash("Failed to initialize service worker " + worker.getCanonicalName());
+            }
+        }
+    }
+
+    protected void disableServiceWorker(Field i) {
+        disableServiceWorker(i, this);
+    }
+
+    private void disableServiceWorker(Field i, Object o) {
+        if (i.isAnnotationPresent(Service.class)) {
+            i.setAccessible(true);
+            Class<? extends IService> worker = (Class<? extends IService>) i.getType();
+
+            try {
+                IService sw = (IService) i.get(o);
+
+                try {
+                    sw.stop();
+                } catch (Throwable ex) {
+                    L.ex(ex);
+                    Quill.crash("Faield to disable service worker " + worker.getCanonicalName());
+                }
+            } catch (Throwable e) {
+                L.ex(e);
+                Quill.crash("Failed to stop service worker " + worker.getCanonicalName());
+            }
+        }
+    }
+
+    public abstract void onEnable();
+
+    public abstract void onDisable();
 
     /**
      * Queue a task to be run in parallel with other async init jobs. This service wont be considered online until these tasks finish
@@ -73,7 +254,11 @@ public abstract class QuillService extends QuillServiceWorker {
      * Called by Quill service management. Do not call this.
      */
     public void startService() {
+        Thread.currentThread().setName(getServiceName());
         L.i("Starting " + getServiceName() + " Service");
+        configGson = new GsonBuilder()
+                .registerTypeAdapter(Quill.delegateClass, serviceInstanceCreator)
+                .create();
         sparkplugs = Executors.newCachedThreadPool(new ThreadFactory() {
             int tid = 0;
 
@@ -85,8 +270,8 @@ public abstract class QuillService extends QuillServiceWorker {
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.setUncaughtExceptionHandler((et, e) ->
                 {
-                    L.f("Exception encountered in " + et.getName());
-                    fail(e);
+                    L.ex(e);
+                    Quill.crashStack("Exception encountered in " + et.getName());
                 });
 
                 return t;
@@ -123,7 +308,7 @@ public abstract class QuillService extends QuillServiceWorker {
      * @throws InstantiationException    shit happens
      */
     public static QuillService initializeConfigured(Class<? extends QuillService> delegateClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        QuillService delegateDummy = delegateClass.getConstructor().newInstance();
+        IService delegateDummy = delegateClass.getConstructor().newInstance();
         File configFile = new File("config/" + delegateDummy.getServiceName().toLowerCase() + ".json");
         configFile.getParentFile().mkdirs();
         JSONObject defaultConfig = new JSONObject(new Gson().toJson(delegateDummy));
@@ -153,7 +338,6 @@ public abstract class QuillService extends QuillServiceWorker {
 
         try {
             IO.writeAll(configFile, currentConfig.toString(4));
-            L.v("Updated Configuration");
         } catch (Throwable e) {
             L.ex(e);
             Quill.crashStack("Failed to write a config file... This is bad");
@@ -177,73 +361,6 @@ public abstract class QuillService extends QuillServiceWorker {
         }
 
         L.i("" + getServiceName() + " Service has Stopped");
-    }
-
-    private void enableServiceWorker(Field i) {
-        enableServiceWorker(i, this);
-    }
-
-    private void enableServiceWorker(Field i, Object o) {
-        if (i.isAnnotationPresent(ServiceWorker.class)) {
-            i.setAccessible(true);
-            Class<? extends QuillServiceWorker> worker = (Class<? extends QuillServiceWorker>) i.getType();
-
-            try {
-                QuillServiceWorker sw = (QuillServiceWorker) i.get(o);
-
-                if(sw == null)
-                {
-                    sw = (QuillServiceWorker) i.getType().getConstructor().newInstance();
-                    i.set(o, sw);
-                }
-
-                sw.setParent(this);
-                sw.setServiceDepth(1);
-                try {
-                    sw.start();
-                } catch (Throwable ex) {
-                    L.ex(ex);
-                    Quill.crash("Failed to enable service worker " + worker.getCanonicalName());
-                }
-            } catch (Throwable e) {
-                L.ex(e);
-                Quill.crash("Failed to initialize service worker " + worker.getCanonicalName());
-            }
-        }
-    }
-
-    private void disableServiceWorker(Field i) {
-        disableServiceWorker(i, this);
-    }
-
-    private void disableServiceWorker(Field i, Object o) {
-        if (i.isAnnotationPresent(ServiceWorker.class)) {
-            i.setAccessible(true);
-            Class<? extends QuillServiceWorker> worker = (Class<? extends QuillServiceWorker>) i.getType();
-
-            try {
-                QuillServiceWorker sw = (QuillServiceWorker) i.get(o);
-
-                try {
-                    sw.stop();
-                } catch (Throwable ex) {
-                    L.ex(ex);
-                    Quill.crash("Faield to disable service worker " + worker.getCanonicalName());
-                }
-            } catch (Throwable e) {
-                L.ex(e);
-                Quill.crash("Failed to stop service worker " + worker.getCanonicalName());
-            }
-        }
-    }
-
-    private void fail(Throwable e) {
-        failing = true;
-        L.f("Service Crashed!");
-        L.ex(e);
-
-        L.w("Attempting to disable if possible...");
-        J.attempt(() -> onDisable());
     }
 
     protected static List<Field> getAllFields(Class<?> aClass) {

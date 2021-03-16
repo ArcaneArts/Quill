@@ -843,6 +843,13 @@ public class Form
 		return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + forceDoubleDigit(d.getMinutes()) + ":" + forceDoubleDigit(d.getSeconds());
 	}
 
+	public static String stampTimeMinutesFancy(long t)
+	{
+		Date d = new Date(t);
+
+		return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + forceDoubleDigit(d.getMinutes());
+	}
+
 	public static String forceDoubleDigit(int dig)
 	{
 		if(dig < 10)

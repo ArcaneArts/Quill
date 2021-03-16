@@ -133,7 +133,7 @@ public class L
 				return;
 			}
 
-			String tagger = "[" + Form.stampTime(M.ms()) + "]: ";
+			String tagger = Form.stampTimeMinutesFancy(M.ms()) + " ";
 
 			if(lastTag.equals(tagger))
 			{
@@ -149,7 +149,7 @@ public class L
 			{
 				synchronized(logBuffer)
 				{
-					logBuffer.queue(tagger + "|" + tag + "/" + Thread.currentThread().getName() + "| " + (l[0] != null ? l[0].toString() : "null"));
+					logBuffer.queue(tagger + "¦" + tag + "⋅" + Thread.currentThread().getName() + "¦ " + (l[0] != null ? l[0].toString() : "null"));
 				}
 				return;
 			}
@@ -163,7 +163,7 @@ public class L
 
 			synchronized(logBuffer)
 			{
-				logBuffer.queue(tagger + "|" + Thread.currentThread().getName() + "/" + tag + "| " + sb.toString());
+				logBuffer.queue(tagger + "⸽" + Thread.currentThread().getName() + "/" + tag + "⸽ " + sb.toString());
 			}
 		}
 		
