@@ -1,4 +1,4 @@
-package art.arcane.quill.service;
+package art.arcane.quill.service.services;
 
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
@@ -7,6 +7,8 @@ import art.arcane.quill.execution.J;
 import art.arcane.quill.format.Form;
 import art.arcane.quill.io.StreamSucker;
 import art.arcane.quill.logging.L;
+import art.arcane.quill.service.CMD;
+import art.arcane.quill.service.QuillService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ConsoleServiceWorker extends QuillServiceWorker {
+public class ConsoleServiceWorker extends QuillService {
     private long activeFlushInterval = 250;
     private long idleFlushInterval = 1000;
     private boolean verbose = true;
@@ -26,7 +28,6 @@ public class ConsoleServiceWorker extends QuillServiceWorker {
     private static final String blank = Form.repeat("    ", 10);
 
     public ConsoleServiceWorker() {
-        super();
         commands = new KMap<>();
         this.shittyConsole = false;
     }

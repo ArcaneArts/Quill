@@ -1,25 +1,25 @@
-package art.arcane.quill.service;
+package art.arcane.quill.service.test;
 
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
 import art.arcane.quill.logging.L;
+import art.arcane.quill.service.services.ConsoleServiceWorker;
+import art.arcane.quill.service.QuillService;
+import art.arcane.quill.service.Service;
 
 public class TestService extends QuillService
 {
+    private int vvv = 0;
     public static void main(String[] a)
     {
         Quill.start(a);
     }
 
-    @ServiceWorker
-    private TestServiceWorker testServiceWorker;
-
-    @ServiceWorker
+    @Service
     private ConsoleServiceWorker console;
 
-    public TestService() {
-        super("TestSVC");
-    }
+    @Service
+    private ChildServiceA a = new ChildServiceA();
 
     @Override
     public void onEnable() {
