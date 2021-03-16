@@ -73,7 +73,7 @@ public abstract class QuillService extends QuillServiceWorker {
      * Called by Quill service management. Do not call this.
      */
     public void startService() {
-        L.i("Starting Quill" + getServiceName() + " Service");
+        L.i("Starting " + getServiceName() + " Service");
         sparkplugs = Executors.newCachedThreadPool(new ThreadFactory() {
             int tid = 0;
 
@@ -81,7 +81,7 @@ public abstract class QuillService extends QuillServiceWorker {
             public Thread newThread(Runnable r) {
                 tid++;
                 Thread t = new Thread(r);
-                t.setName("Quill Sparkplug " + tid);
+                t.setName(getServiceName() + " Sparkplug " + tid);
                 t.setPriority(Thread.MAX_PRIORITY);
                 t.setUncaughtExceptionHandler((et, e) ->
                 {
@@ -107,7 +107,8 @@ public abstract class QuillService extends QuillServiceWorker {
         }
 
         sparkplugs = null;
-        L.i("Quill" + getServiceName() + " Service has Started");
+        Quill.runPost();
+        L.i("" + getServiceName() + " Service has Started");
         Runtime.getRuntime().addShutdownHook(new Thread(this::stopService));
     }
 
@@ -168,14 +169,14 @@ public abstract class QuillService extends QuillServiceWorker {
      * Called by the Quill service management. Do not call this. Instead use Quill.shutdown();
      */
     public void stopService() {
-        L.i("Stopping Quill" + getServiceName() + " Service");
+        L.i("Stopping " + getServiceName() + " Service");
         onDisable();
 
         for (Field i : getAllFields(getClass())) {
             disableServiceWorker(i);
         }
 
-        L.i("Quill" + getServiceName() + " Service has Stopped");
+        L.i("" + getServiceName() + " Service has Stopped");
     }
 
     private void enableServiceWorker(Field i) {
@@ -238,7 +239,7 @@ public abstract class QuillService extends QuillServiceWorker {
 
     private void fail(Throwable e) {
         failing = true;
-        L.f("Service CRASH!");
+        L.f("Service Crashed!");
         L.ex(e);
 
         L.w("Attempting to disable if possible...");

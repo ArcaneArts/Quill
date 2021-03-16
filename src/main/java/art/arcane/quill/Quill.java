@@ -1,5 +1,7 @@
 package art.arcane.quill;
 
+import art.arcane.quill.collections.KList;
+import art.arcane.quill.collections.functional.NastyRunnable;
 import art.arcane.quill.execution.J;
 import art.arcane.quill.logging.L;
 import art.arcane.quill.math.Profiler;
@@ -16,6 +18,47 @@ public class Quill
 	public static final ServiceManager serviceManager = new ServiceManager();
 	private static boolean gracefulShutdown = false;
 	private static boolean shutdownHooks = false;
+	private static boolean postRan = false;
+	private static final KList<NastyRunnable> post = new KList<>();
+
+	public static void postJob(NastyRunnable r)
+	{
+		if(postRan)
+		{
+			Quill.crashStack("Cannot queue post jobs after startup has completed or during post execution. You can only use this during onEnable() or before.");
+			return;
+		}
+
+		post.add(r);
+	}
+
+	public static void runPost()
+	{
+		if(postRan)
+		{
+			Quill.crashStack("Cannot execute post jobs twice.");
+			return;
+		}
+
+		postRan = true;
+
+		post.forEach((i) -> {
+			try
+			{
+				i.run();
+			}
+
+			catch(Throwable e)
+			{
+				L.ex(e);
+				Quill.crashStack("Failed to execute post job (see above)");
+			}
+		});
+
+		L.v("Ran " + post.size() + " Post Job(s)");
+
+		post.clear();
+	}
 
 	public static void start(String[] a) {
 		for (StackTraceElement i : Thread.currentThread().getStackTrace()) {
