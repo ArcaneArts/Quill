@@ -6,11 +6,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class ID {
     public static final int LENGTH = 64;
-    private final String value;
+    private String id; // Can't be final since it's used in really dirty ways.
 
-    private ID(String value)
+    private ID(String id)
     {
-        this.value = value;
+        this.id = id;
     }
 
     public static ID fromString(String v)
@@ -30,6 +30,6 @@ public class ID {
 
     public String toString()
     {
-        return value;
+        return id;
     }
 }
