@@ -7,8 +7,9 @@ import art.arcane.quill.execution.J;
 import art.arcane.quill.format.Form;
 import art.arcane.quill.io.StreamSucker;
 import art.arcane.quill.logging.L;
-import art.arcane.quill.service.CMD;
+import art.arcane.quill.service.util.CMD;
 import art.arcane.quill.service.QuillService;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,12 +18,24 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 public class ConsoleService extends QuillService {
+    @Builder.Default
     private long activeFlushInterval = 250;
+
+    @Builder.Default
     private long idleFlushInterval = 1000;
+
+    @Builder.Default
     private boolean verbose = true;
+
+    @Builder.Default
     private boolean deduplicateLines = true;
+
+    @Builder.Default
     private boolean allowCommands = true;
+
+    @Builder.Default
     private boolean shittyConsole = false;
     private transient KMap<String, CMD> commands;
     private static final String blank = Form.repeat("    ", 10);

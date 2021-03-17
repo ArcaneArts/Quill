@@ -1,4 +1,4 @@
-package art.arcane.quill.service;
+package art.arcane.quill.service.util;
 
 @FunctionalInterface
 public interface CMD

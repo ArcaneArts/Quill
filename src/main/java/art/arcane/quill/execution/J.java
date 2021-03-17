@@ -8,6 +8,7 @@ import art.arcane.quill.logging.L;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class J
@@ -54,6 +55,15 @@ public class J
 		{
 			L.ex(e);
 		}
+	}
+
+	public static Runnable runWhile(Supplier<Boolean> condition, Runnable r)
+	{
+		return () -> {
+			while(condition.get()) {
+				r.run();
+			}
+		};
 	}
 	
 	public static void a(Runnable a)
