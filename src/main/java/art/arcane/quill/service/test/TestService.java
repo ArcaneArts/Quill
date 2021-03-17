@@ -3,7 +3,7 @@ package art.arcane.quill.service.test;
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
 import art.arcane.quill.logging.L;
-import art.arcane.quill.service.services.ConsoleServiceWorker;
+import art.arcane.quill.service.services.ConsoleService;
 import art.arcane.quill.service.QuillService;
 import art.arcane.quill.service.Service;
 
@@ -16,7 +16,7 @@ public class TestService extends QuillService
     }
 
     @Service
-    private ConsoleServiceWorker console;
+    private ConsoleService console;
 
     @Service
     private ChildServiceA a = new ChildServiceA();

@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ConsoleServiceWorker extends QuillService {
+public class ConsoleService extends QuillService {
     private long activeFlushInterval = 250;
     private long idleFlushInterval = 1000;
     private boolean verbose = true;
@@ -27,7 +27,7 @@ public class ConsoleServiceWorker extends QuillService {
     private transient KMap<String, CMD> commands;
     private static final String blank = Form.repeat("    ", 10);
 
-    public ConsoleServiceWorker() {
+    public ConsoleService() {
         commands = new KMap<>();
         this.shittyConsole = false;
     }
