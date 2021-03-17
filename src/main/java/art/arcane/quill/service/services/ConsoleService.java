@@ -9,15 +9,15 @@ import art.arcane.quill.io.StreamSucker;
 import art.arcane.quill.logging.L;
 import art.arcane.quill.service.util.CMD;
 import art.arcane.quill.service.QuillService;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * The console worker is used to manage console commands. You can register commands for your service here.
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ConsoleService extends QuillService {
     @Builder.Default
@@ -37,13 +37,8 @@ public class ConsoleService extends QuillService {
 
     @Builder.Default
     private boolean shittyConsole = false;
-    private transient KMap<String, CMD> commands;
+    private transient final KMap<String, CMD> commands = new KMap<>();
     private static final String blank = Form.repeat("    ", 10);
-
-    public ConsoleService() {
-        commands = new KMap<>();
-        this.shittyConsole = false;
-    }
 
     @Override
     public void onEnable() {
