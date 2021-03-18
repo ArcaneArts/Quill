@@ -132,6 +132,7 @@ public abstract class QuillService implements IService {
     }
 
     public void start() {
+        Quill.logState("service[" + getServiceName() + "]", "startup");
         if (enabled) {
             Quill.crashStack("Service Worker " + getName() + " was already running!");
         }
@@ -139,15 +140,18 @@ public abstract class QuillService implements IService {
         try {
             L.i(Form.repeat("  ", serviceDepth) + "Starting " + getName() + " Service Worker");
 
+            Quill.logState("service[" + getServiceName() + "]", "startup.startChildren");
             for (Field i : getAllFields(getClass())) {
                 enableServiceWorker(i);
             }
 
             duringInit.set(true);
+            Quill.logState("service[" + getServiceName() + "]", "startup.onEnable");
             onEnable();
             duringInit.set(false);
             L.i(Form.repeat("  ", serviceDepth) + "Started " + getName() + " Service Worker");
             enabled = true;
+            Quill.logState("service[" + getServiceName() + "]", "online");
         } catch (Throwable e) {
             L.ex(e);
             Quill.crash("Failed to enable " + getName());
@@ -181,6 +185,7 @@ public abstract class QuillService implements IService {
 
     protected void enableServiceWorker(Field i, Object o) {
         if (i.isAnnotationPresent(Service.class)) {
+
             i.setAccessible(true);
             Class<? extends IService> worker = (Class<? extends IService>) i.getType();
 
@@ -193,14 +198,18 @@ public abstract class QuillService implements IService {
                     i.set(o, sw);
                 }
 
+                Quill.logState("service[" + getServiceName() + "]", "children." + sw.getServiceName() + ".init");
                 sw.setServiceDepth(getServiceDepth() + 1);
                 sw.setParent(this);
                 try {
+                    Quill.logState("service[" + getServiceName() + "]", "children." + sw.getServiceName() + ".starting");
                     sw.start();
                 } catch (Throwable ex) {
                     L.ex(ex);
                     Quill.crash("Failed to enable service worker " + worker.getCanonicalName());
                 }
+
+                Quill.logState("service[" + getServiceName() + "]", "children." + sw.getServiceName() + ".online");
             } catch (Throwable e) {
                 L.ex(e);
                 Quill.crash("Failed to initialize service worker " + worker.getCanonicalName());

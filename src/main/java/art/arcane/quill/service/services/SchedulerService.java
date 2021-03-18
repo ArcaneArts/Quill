@@ -2,6 +2,7 @@ package art.arcane.quill.service.services;
 
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
+import art.arcane.quill.collections.functional.NastyRunnable;
 import art.arcane.quill.execution.ChronoLatch;
 import art.arcane.quill.execution.J;
 import art.arcane.quill.format.Form;
@@ -10,12 +11,12 @@ import art.arcane.quill.math.M;
 import art.arcane.quill.math.Profiler;
 import art.arcane.quill.service.QuillService;
 import art.arcane.quill.service.util.ITask;
+import art.arcane.quill.service.util.SingularTask;
 import lombok.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -129,12 +130,41 @@ public class SchedulerService extends QuillService {
      * cancelled by it's id.
      * @param task the task to queue
      */
-    public void queue(ITask task)
+    public int queue(ITask task)
     {
         synchronized(tasks)
         {
             tasks.add(task);
         }
+
+        return task.getTaskId();
+    }
+
+    public boolean cancelTask(int taskId)
+    {
+        synchronized (tasks)
+        {
+            for(int i = 0; i < tasks.size(); i++)
+            {
+                if(tasks.get(i).getTaskId() == taskId)
+                {
+                    tasks.remove(i);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void queue(NastyRunnable r)
+    {
+        queue(SingularTask.now(r));
+    }
+
+    public void queue(long delay, NastyRunnable r)
+    {
+        queue(SingularTask.after(delay, r));
     }
 
     private void tickScheduler()

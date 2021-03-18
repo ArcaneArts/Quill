@@ -1,18 +1,16 @@
 package art.arcane.quill;
 
-import art.arcane.quill.collections.ID;
 import art.arcane.quill.collections.KList;
+import art.arcane.quill.collections.KMap;
 import art.arcane.quill.collections.functional.NastyRunnable;
 import art.arcane.quill.execution.J;
 import art.arcane.quill.logging.L;
 import art.arcane.quill.math.Profiler;
 import art.arcane.quill.service.QuillService;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-
 public class Quill
 {
+	private static KMap<String, String> crashMetrics = new KMap<>();
 	public static Class<? extends QuillService> delegateClass = null;
 	public static QuillService delegate = null;
 	public static String DIR = System.getenv("APPDATA") + "/Shuriken";
@@ -32,6 +30,11 @@ public class Quill
 		}
 
 		post.add(r);
+	}
+
+	public static void logState(String key, String v)
+	{
+		crashMetrics.put(key, v);
 	}
 
 	public static void runPost()
@@ -144,15 +147,49 @@ public class Quill
 		crash("¯\\_(ツ)_/¯");
 	}
 
+	public static void crash(Throwable e) {
+		printErr("¯\\_(ツ)_/¯", e);
+		System.exit(1);
+	}
+
+	public static void crash(String message, Throwable e) {
+		printErr(message, e);
+		System.exit(1);
+	}
+
 	public static void crashStack(String message) {
-		J.printStack(message);
-		crash(message);
+		printErr(message);
+		System.exit(1);
 	}
 
 	public static void crash(String message) {
-		L.f("Chimera Service Crash: " + message);
-		L.flush();
+		printErr(message);
 		System.exit(1);
+	}
+
+	private static void printErr(String message) {
+		printErr(message, new RuntimeException(message));
+	}
+
+	private static void printErr(String message, Throwable e) {
+		L.flush();
+		L.f("===============================================================================================");
+		L.flush();
+		L.f("System Crash: " + message);
+		L.f("-----------------------------------------------------------------------------------------------");
+		L.flush();
+		L.ex(e);
+		L.f("-----------------------------------------------------------------------------------------------");
+		L.flush();
+		L.f("Read above for any stack traces. Below is additional state info before");
+		L.f("the crash happened.");
+		L.f("-----------------------------------------------------------------------------------------------");
+		for(String i : crashMetrics.k())
+		{
+			L.f(i + ": " + crashMetrics.get(i));
+		}
+		L.f("===============================================================================================");
+		L.flush();
 	}
 
 	public static String getDelegateModuleName() {
