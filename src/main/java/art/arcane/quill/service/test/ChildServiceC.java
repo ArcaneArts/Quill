@@ -1,13 +1,11 @@
 package art.arcane.quill.service.test;
 
 import art.arcane.quill.execution.J;
-import art.arcane.quill.logging.L;
 import art.arcane.quill.math.M;
 import art.arcane.quill.random.RNG;
 import art.arcane.quill.service.QuillService;
 import art.arcane.quill.service.Service;
 import art.arcane.quill.service.services.SchedulerService;
-import art.arcane.quill.service.util.RepeatingTask;
 import art.arcane.quill.service.util.SingularTask;
 
 public class ChildServiceC extends QuillService
@@ -19,6 +17,8 @@ public class ChildServiceC extends QuillService
     @Override
     public void onEnable() {
         v("My Parent is " + getParent().getServiceName());
+        scheduler.setVerbose(true);
+        scheduler.setBurstExecutionThreshold(3000);
 
         for(int i = 0; i < 2000; i++)
         {
@@ -27,17 +27,17 @@ public class ChildServiceC extends QuillService
 
                 if(M.r(0.1))
                 {
-                    J.sleep(RNG.r.i(800));
+                    J.sleep(RNG.r.i(222));
                 }
 
                 if(M.r(0.01))
                 {
-                    J.sleep(RNG.r.i(8000));
+                    J.sleep(RNG.r.i(100));
                 }
 
                 if(M.r(0.07))
                 {
-                    scheduler.queue(SingularTask.after(RNG.r.i(1000), () -> J.sleep(RNG.r.i(1000))));
+                    scheduler.queue(SingularTask.after(RNG.r.i(100), () -> J.sleep(RNG.r.i(1000))));
                 }
             }));
         }
