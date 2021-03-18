@@ -140,7 +140,7 @@ public class Quill
 
 		L.flush();
 		gracefulShutdown = true;
-		System.exit(0);
+		shutdownGracefully();
 	}
 
 	public static void crash() {
@@ -149,22 +149,22 @@ public class Quill
 
 	public static void crash(Throwable e) {
 		printErr("¯\\_(ツ)_/¯", e);
-		System.exit(1);
+		shutdown(1);
 	}
 
 	public static void crash(String message, Throwable e) {
 		printErr(message, e);
-		System.exit(1);
+		shutdown(1);
 	}
 
 	public static void crashStack(String message) {
 		printErr(message);
-		System.exit(1);
+		shutdown(1);
 	}
 
 	public static void crash(String message) {
 		printErr(message);
-		System.exit(1);
+		shutdown(1);
 	}
 
 	private static void printErr(String message) {
@@ -190,6 +190,18 @@ public class Quill
 		}
 		L.f("===============================================================================================");
 		L.flush();
+	}
+
+	public static void shutdownGracefully()
+	{
+		L.flush();
+		L.shutdown();
+	}
+
+	public static void shutdown(int code)
+	{
+		shutdownGracefully();
+		System.exit(code);
 	}
 
 	public static String getDelegateModuleName() {

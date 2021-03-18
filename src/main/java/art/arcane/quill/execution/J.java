@@ -110,7 +110,7 @@ public class J
 		
 		return onError;
 	}
-	
+
 	public static boolean sleep(long ms)
 	{
 		try
@@ -125,6 +125,21 @@ public class J
 		}
 
 		return false;
+	}
+
+	public static void sleepWhile(Supplier<Boolean> v, long m)
+	{
+		while(v.get())
+		{
+			J.sleep(m);
+		}
+	}
+	public static void sleepWhile(Supplier<Boolean> v)
+	{
+		while(v.get())
+		{
+			J.sleep(1);
+		}
 	}
 	
 	public static boolean attempt(NastyRunnable r)

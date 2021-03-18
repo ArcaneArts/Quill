@@ -68,22 +68,22 @@ public abstract class QuillService implements IService {
 
     public void i(Object...v)
     {
-        L.i((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+        L.i((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
     public void v(Object...v)
     {
-        L.v((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+        L.v((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
     public void w(Object...v)
     {
-        L.w((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+        L.w((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
     public void f(Object...v)
     {
-        L.f((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "〘" + getServiceName() + "〙 " + toString(v));
+        L.f((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
     public IService getRawService(String field) {

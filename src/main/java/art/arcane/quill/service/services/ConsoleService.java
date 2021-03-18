@@ -116,6 +116,10 @@ public class ConsoleService extends QuillService {
         commands.put(string, cmd);
     }
 
+    public void unregisterCommand(String string) {
+        commands.remove(string);
+    }
+
     private void processCommand(String command, String... params) {
         if (!allowCommands) {
             return;

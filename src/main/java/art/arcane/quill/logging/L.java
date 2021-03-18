@@ -30,6 +30,10 @@ public class L
 		logConsumers.clear();
 	}
 
+	public static void shutdown() {
+		looper.interrupt();
+	}
+
 	public static void pss() {
 		try {
 			throw new RuntimeException("Stack Trace");

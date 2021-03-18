@@ -14,6 +14,8 @@ import art.arcane.quill.service.util.ITask;
 import art.arcane.quill.service.util.SingularTask;
 import lombok.*;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -121,7 +123,15 @@ public class SchedulerService extends QuillService {
     public void onEnable() {
         schedulerThread.setName(getParent().getServiceName() + " Scheduler");
         schedulerThread.setPriority(getSchedulerThreadPriority());
-        schedulerThread.start();
+        Quill.postJob(schedulerThread::start);
+    }
+
+    public Future<Void> whenCompleted()
+    {
+        return CompletableFuture.runAsync(() -> J.sleepWhile(() -> {
+            L.v("Tasks = " + tasks.size());
+            return tasks.size() > 0;
+        }));
     }
 
     /**
@@ -132,29 +142,29 @@ public class SchedulerService extends QuillService {
      */
     public int queue(ITask task)
     {
-        synchronized(tasks)
+        synchronized (tasks)
         {
             tasks.add(task);
-        }
 
-        return task.getTaskId();
+            return task.getTaskId();
+        }
     }
 
     public boolean cancelTask(int taskId)
     {
-        synchronized (tasks)
-        {
-            for(int i = 0; i < tasks.size(); i++)
-            {
-                if(tasks.get(i).getTaskId() == taskId)
-                {
-                    tasks.remove(i);
-                    return true;
-                }
-            }
-        }
+       synchronized (tasks)
+       {
+           for(int i = 0; i < tasks.size(); i++)
+           {
+               if(tasks.get(i).getTaskId() == taskId)
+               {
+                   tasks.remove(i);
+                   return true;
+               }
+           }
 
-        return false;
+           return false;
+       }
     }
 
     public void queue(NastyRunnable r)
@@ -169,15 +179,6 @@ public class SchedulerService extends QuillService {
 
     private void tickScheduler()
     {
-        synchronized(tasks)
-        {
-            if(tasks.isEmpty())
-            {
-                J.sleep(getTickInterval());
-                return;
-            }
-        }
-
         long spent = execute(getTickInterval());
         getTickDeviation().addAndGet(spent - getTickInterval());
 
@@ -214,12 +215,12 @@ public class SchedulerService extends QuillService {
     }
 
     private long execute(long maxTime) {
+        executionTimer.begin();
+        int t = tickCount.getAndIncrement();
+        long time = M.ms();
+
         synchronized(tasks)
         {
-            executionTimer.begin();
-            int t = tickCount.getAndIncrement();
-            long time = M.ms();
-
             if(isReshuffleWhenPegged() && lastTickOverflow.get() && t % getReshuffleInterval() == 0)
             {
                 lastTickOverflow.set(false);
@@ -257,10 +258,10 @@ public class SchedulerService extends QuillService {
                     break;
                 }
             }
-
-            lastTick.set(time);
-            return (long) Math.ceil(executionTimer.getMilliseconds());
         }
+
+        lastTick.set(time);
+        return (long) Math.ceil(executionTimer.getMilliseconds());
     }
 
     private void executeTask(ITask task) {
