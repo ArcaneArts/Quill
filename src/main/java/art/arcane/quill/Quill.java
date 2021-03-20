@@ -10,6 +10,7 @@ import art.arcane.quill.service.QuillService;
 
 public class Quill
 {
+	public static boolean testMode = false;
 	private static KMap<String, String> crashMetrics = new KMap<>();
 	public static Class<? extends QuillService> delegateClass = null;
 	public static QuillService delegate = null;
@@ -201,6 +202,13 @@ public class Quill
 	public static void shutdown(int code)
 	{
 		shutdownGracefully();
+
+		if(testMode)
+		{
+			System.out.println("Quill would have exited with code " + code + " if we werent in test mode right now.");
+			return;
+		}
+
 		System.exit(code);
 	}
 
