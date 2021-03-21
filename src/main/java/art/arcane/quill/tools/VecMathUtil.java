@@ -1,4 +1,20 @@
 /*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * $RCSfile$
  *
  * Copyright 2004-2008 Sun Microsystems, Inc.  All Rights Reserved.
@@ -37,6 +53,12 @@ package art.arcane.quill.tools;
  */
 public class VecMathUtil {
     /**
+     * Do not construct an instance of this class.
+     */
+    private VecMathUtil() {
+    }
+
+    /**
      * Returns the representation of the specified floating-point
      * value according to the IEEE 754 floating-point "single format"
      * bit layout, after first mapping -0.0 to 0.0. This method is
@@ -56,13 +78,12 @@ public class VecMathUtil {
      * number, after first mapping -0.0f to 0.0f
      */
     public static int floatToIntBits(float f) {
-	// Check for +0 or -0
-	if (f == 0.0f) {
-	    return 0;
-	}
-	else {
-	    return Float.floatToIntBits(f);
-	}
+        // Check for +0 or -0
+        if (f == 0.0f) {
+            return 0;
+        } else {
+            return Float.floatToIntBits(f);
+        }
     }
 
     /**
@@ -85,19 +106,11 @@ public class VecMathUtil {
      * number, after first mapping -0.0f to 0.0f
      */
     public static long doubleToLongBits(double d) {
-	// Check for +0 or -0
-	if (d == 0.0) {
-	    return 0L;
-	}
-	else {
-	    return Double.doubleToLongBits(d);
-	}
-    }
-
-
-    /**
-     * Do not construct an instance of this class.
-     */
-    private VecMathUtil() {
+        // Check for +0 or -0
+        if (d == 0.0) {
+            return 0L;
+        } else {
+            return Double.doubleToLongBits(d);
+        }
     }
 }

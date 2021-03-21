@@ -1,148 +1,140 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.math;
 
 
 import art.arcane.quill.format.Form;
 
-public class Profiler
-{
-	private long nanos;
-	private long startNano;
-	private long millis;
-	private long startMillis;
-	private double time;
-	private boolean profiling;
+public class Profiler {
+    private long nanos;
+    private long startNano;
+    private long millis;
+    private long startMillis;
+    private double time;
+    private boolean profiling;
 
-	public static Profiler start()
-	{
-		Profiler p = new Profiler();
-		p.begin();
+    public Profiler() {
+        reset();
+        profiling = false;
+    }
 
-		return p;
-	}
+    public static Profiler start() {
+        Profiler p = new Profiler();
+        p.begin();
 
-	public Profiler()
-	{
-		reset();
-		profiling = false;
-	}
+        return p;
+    }
 
-	public void begin()
-	{
-		profiling = true;
-		startNano = System.nanoTime();
-		startMillis = System.currentTimeMillis();
-	}
+    public void begin() {
+        profiling = true;
+        startNano = System.nanoTime();
+        startMillis = System.currentTimeMillis();
+    }
 
-	public void end()
-	{
-		if(!profiling)
-		{
-			return;
-		}
+    public void end() {
+        if (!profiling) {
+            return;
+        }
 
-		profiling = false;
-		nanos = System.nanoTime() - startNano;
-		millis = System.currentTimeMillis() - startMillis;
-		time = (double) nanos / 1000000.0;
-		time = (double) millis - time > 1.01 ? millis : time;
-	}
+        profiling = false;
+        nanos = System.nanoTime() - startNano;
+        millis = System.currentTimeMillis() - startMillis;
+        time = (double) nanos / 1000000.0;
+        time = (double) millis - time > 1.01 ? millis : time;
+    }
 
-	public void reset()
-	{
-		nanos = -1;
-		millis = -1;
-		startNano = -1;
-		startMillis = -1;
-		time = -0;
-		profiling = false;
-	}
+    public void reset() {
+        nanos = -1;
+        millis = -1;
+        startNano = -1;
+        startMillis = -1;
+        time = -0;
+        profiling = false;
+    }
 
-	public String getTime(int dec)
-	{
-		if(getNanoseconds() < 1000.0)
-		{
-			return Form.f(getNanoseconds()) + "ns";
-		}
+    public String getTime(int dec) {
+        if (getNanoseconds() < 1000.0) {
+            return Form.f(getNanoseconds()) + "ns";
+        }
 
-		if(getMilliseconds() < 1000.0)
-		{
-			return Form.f(getMilliseconds(), dec) + "ms";
-		}
+        if (getMilliseconds() < 1000.0) {
+            return Form.f(getMilliseconds(), dec) + "ms";
+        }
 
-		if(getSeconds() < 60.0)
-		{
-			return Form.f(getSeconds(), dec) + "s";
-		}
+        if (getSeconds() < 60.0) {
+            return Form.f(getSeconds(), dec) + "s";
+        }
 
-		if(getMinutes() < 60.0)
-		{
-			return Form.f(getMinutes(), dec) + "m";
-		}
+        if (getMinutes() < 60.0) {
+            return Form.f(getMinutes(), dec) + "m";
+        }
 
-		return Form.f(getHours(), dec) + "h";
-	}
+        return Form.f(getHours(), dec) + "h";
+    }
 
-	public double getTicks()
-	{
-		return getMilliseconds() / 50.0;
-	}
+    public double getTicks() {
+        return getMilliseconds() / 50.0;
+    }
 
-	public double getSeconds()
-	{
-		return getMilliseconds() / 1000.0;
-	}
+    public double getSeconds() {
+        return getMilliseconds() / 1000.0;
+    }
 
-	public double getMinutes()
-	{
-		return getSeconds() / 60.0;
-	}
+    public double getMinutes() {
+        return getSeconds() / 60.0;
+    }
 
-	public double getHours()
-	{
-		return getMinutes() / 60.0;
-	}
+    public double getHours() {
+        return getMinutes() / 60.0;
+    }
 
-	public double getMilliseconds()
-	{
-		nanos = System.nanoTime() - startNano;
-		millis = System.currentTimeMillis() - startMillis;
-		time = (double) nanos / 1000000.0;
-		time = (double) millis - time > 1.01 ? millis : time;
-		return time;
-	}
+    public double getMilliseconds() {
+        nanos = System.nanoTime() - startNano;
+        millis = System.currentTimeMillis() - startMillis;
+        time = (double) nanos / 1000000.0;
+        time = (double) millis - time > 1.01 ? millis : time;
+        return time;
+    }
 
-	public long getNanoseconds()
-	{
-		return (long) (time * 1000000.0);
-	}
+    public long getNanoseconds() {
+        return (long) (time * 1000000.0);
+    }
 
-	public long getNanos()
-	{
-		return nanos;
-	}
+    public long getNanos() {
+        return nanos;
+    }
 
-	public long getStartNano()
-	{
-		return startNano;
-	}
+    public long getStartNano() {
+        return startNano;
+    }
 
-	public long getMillis()
-	{
-		return millis;
-	}
+    public long getMillis() {
+        return millis;
+    }
 
-	public long getStartMillis()
-	{
-		return startMillis;
-	}
+    public long getStartMillis() {
+        return startMillis;
+    }
 
-	public double getTime()
-	{
-		return time;
-	}
+    public double getTime() {
+        return time;
+    }
 
-	public boolean isProfiling()
-	{
-		return profiling;
-	}
+    public boolean isProfiling() {
+        return profiling;
+    }
 }

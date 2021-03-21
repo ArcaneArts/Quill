@@ -1,231 +1,203 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.config;
 
-import com.google.gson.Gson;
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KMap;
 import art.arcane.quill.execution.J;
 import art.arcane.quill.io.IO;
 import art.arcane.quill.json.JSONObject;
 import art.arcane.quill.logging.L;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.UUID;
 
-public class Props extends KMap<String, Object>
-{
-	private static final long serialVersionUID = -7017325150027317798L;
-	protected transient String key;
+public class Props extends KMap<String, Object> {
+    private static final long serialVersionUID = -7017325150027317798L;
+    protected transient String key;
 
-	public Props()
-	{
-		super();
-	}
+    public Props() {
+        super();
+    }
 
-	public void commit()
-	{
-		if(key == null)
-		{
-			return;
-		}
+    public static Props of(String key) {
+        try {
+            Props p = new Gson().fromJson(IO.readAll(getProperties(key)), Props.class);
+            p.key = key;
+            return p;
+        } catch (Throwable e) {
 
-		try
-		{
-			IO.writeAll(getProperties(key), toJSON().toString(0));
-			L.v("Saved " + key + " properties.");
-		}
+        }
 
-		catch(Throwable e)
-		{
-			L.f("Failed to save " + key + " properties.");
-			L.ex(e);
-		}
-	}
+        Props p = new Props();
+        p.key = key;
+        return p;
+    }
 
-	public void apply()
-	{
-		if(key == null)
-		{
-			return;
-		}
+    protected static File getProperties(String key) {
+        File f = new File(Quill.DIR + "/Property Caches/" + UUID.nameUUIDFromBytes(key.getBytes()) + ".properties");
+        f.getParentFile().mkdirs();
 
-		J.a(this::commit);
-	}
+        return f;
+    }
 
-	public static Props of(String key)
-	{
-		try
-		{
-			Props p = new Gson().fromJson(IO.readAll(getProperties(key)), Props.class);
-			p.key = key;
-			return p;
-		}
+    public static Props fromJSON(JSONObject j) {
+        return new Gson().fromJson(j.toString(0), Props.class);
+    }
 
-		catch(Throwable e)
-		{
+    public void commit() {
+        if (key == null) {
+            return;
+        }
 
-		}
+        try {
+            IO.writeAll(getProperties(key), toJSON().toString(0));
+            L.v("Saved " + key + " properties.");
+        } catch (Throwable e) {
+            L.f("Failed to save " + key + " properties.");
+            L.ex(e);
+        }
+    }
 
-		Props p = new Props();
-		p.key = key;
-		return p;
-	}
+    public void apply() {
+        if (key == null) {
+            return;
+        }
 
-	protected static File getProperties(String key)
-	{
-		File f = new File(Quill.DIR + "/Property Caches/" + UUID.nameUUIDFromBytes(key.getBytes()) + ".properties");
-		f.getParentFile().mkdirs();
+        J.a(this::commit);
+    }
 
-		return f;
-	}
+    public JSONObject toJSON() {
+        return new JSONObject(new Gson().toJson(this));
+    }
 
-	public static Props fromJSON(JSONObject j)
-	{
-		return new Gson().fromJson(j.toString(0), Props.class);
-	}
+    public Props crop(String prekey) {
+        Props cropped = new Props();
 
-	public JSONObject toJSON()
-	{
-		return new JSONObject(new Gson().toJson(this));
-	}
+        for (String i : k()) {
+            if (i.startsWith(prekey)) {
+                String k = i.replaceFirst("\\Q" + prekey + "\\E", "");
+                cropped.put(k.startsWith(".") ? k.substring(1) : k, get(i));
+            }
+        }
 
-	public Props crop(String prekey)
-	{
-		Props cropped = new Props();
+        return cropped;
+    }
 
-		for(String i : k())
-		{
-			if(i.startsWith(prekey))
-			{
-				String k = i.replaceFirst("\\Q" + prekey + "\\E", "");
-				cropped.put(k.startsWith(".") ? k.substring(1) : k, get(i));
-			}
-		}
+    public Props put(Props cc) {
+        super.putAll(cc);
 
-		return cropped;
-	}
+        return this;
+    }
 
-	public Props put(Props cc)
-	{
-		super.putAll(cc);
+    public Props put(Props cc, String prefix) {
+        for (String i : cc.k()) {
+            put(prefix + i, cc.get(i));
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	public Props put(Props cc, String prefix)
-	{
-		for(String i : cc.k())
-		{
-			put(prefix + i, cc.get(i));
-		}
+    public Props copy() {
+        Props cc = new Props();
+        cc.putAll(super.copy());
 
-		return this;
-	}
+        return cc;
+    }
 
-	public Props copy()
-	{
-		Props cc = new Props();
-		cc.putAll(super.copy());
+    public boolean has(String key) {
+        return containsKey(key);
+    }
 
-		return cc;
-	}
+    public Integer getInt(String key) {
+        return get(key);
+    }
 
-	public boolean has(String key)
-	{
-		return containsKey(key);
-	}
+    public Long getLong(String key) {
+        return get(key);
+    }
 
-	public Integer getInt(String key)
-	{
-		return get(key);
-	}
+    public Float getFloat(String key) {
+        return get(key);
+    }
 
-	public Long getLong(String key)
-	{
-		return get(key);
-	}
+    public Short getShort(String key) {
+        return get(key);
+    }
 
-	public Float getFloat(String key)
-	{
-		return get(key);
-	}
+    public Boolean getBoolean(String key) {
+        return get(key);
+    }
 
-	public Short getShort(String key)
-	{
-		return get(key);
-	}
+    public Double getDouble(String key) {
+        return get(key);
+    }
 
-	public Boolean getBoolean(String key)
-	{
-		return get(key);
-	}
+    public String getString(String key) {
+        return get(key);
+    }
 
-	public Double getDouble(String key)
-	{
-		return get(key);
-	}
+    public Byte getByte(String key) {
+        return get(key);
+    }
 
-	public String getString(String key)
-	{
-		return get(key);
-	}
+    public int getInt(String key, int defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public Byte getByte(String key)
-	{
-		return get(key);
-	}
+    public long getLong(String key, long defaultValue) {
+        Object o = get(key);
 
-	public int getInt(String key, int defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+        if (o instanceof Double) {
+            Double x = get(key);
 
-	public long getLong(String key, long defaultValue)
-	{
-		Object o = get(key);
+            return containsKey(key) ? x.longValue() : defaultValue;
+        }
 
-		if(o instanceof Double)
-		{
-			Double x = get(key);
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-			return containsKey(key) ? x.longValue() : defaultValue;
-		}
+    public float getFloat(String key, float defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+    public short getShort(String key, short defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public float getFloat(String key, float defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public short getShort(String key, short defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+    public double getDouble(String key, double defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public boolean getBoolean(String key, boolean defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+    public String getString(String key, String defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public double getDouble(String key, double defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
+    public byte getByte(String key, byte defaultValue) {
+        return containsKey(key) ? get(key) : defaultValue;
+    }
 
-	public String getString(String key, String defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
-
-	public byte getByte(String key, byte defaultValue)
-	{
-		return containsKey(key) ? get(key) : defaultValue;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T get(String key)
-	{
-		return (T) super.get(key);
-	}
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
+        return (T) super.get(key);
+    }
 }

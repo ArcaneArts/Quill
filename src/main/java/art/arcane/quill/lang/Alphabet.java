@@ -1,3 +1,19 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.lang;
 
 import art.arcane.quill.collections.KList;
@@ -7,205 +23,194 @@ import art.arcane.quill.collections.KList;
  *
  * @author cyberpwn
  */
-public enum Alphabet
-{
-	/**
-	 * A
-	 */
-	ALPHA,
+public enum Alphabet {
+    /**
+     * A
+     */
+    ALPHA,
 
-	/**
-	 * B
-	 */
-	BRAVO,
+    /**
+     * B
+     */
+    BRAVO,
 
-	/**
-	 * C
-	 */
-	CHARLIE,
+    /**
+     * C
+     */
+    CHARLIE,
 
-	/**
-	 * D
-	 */
-	DELTA,
+    /**
+     * D
+     */
+    DELTA,
 
-	/**
-	 * E
-	 */
-	ECHO,
+    /**
+     * E
+     */
+    ECHO,
 
-	/**
-	 * F
-	 */
-	FOXTROT,
+    /**
+     * F
+     */
+    FOXTROT,
 
-	/**
-	 * G
-	 */
-	GOLF,
+    /**
+     * G
+     */
+    GOLF,
 
-	/**
-	 * H
-	 */
-	HOTEL,
+    /**
+     * H
+     */
+    HOTEL,
 
-	/**
-	 * I
-	 */
-	INDIA,
+    /**
+     * I
+     */
+    INDIA,
 
-	/**
-	 * J
-	 */
-	JULIET,
+    /**
+     * J
+     */
+    JULIET,
 
-	/**
-	 * K
-	 */
-	KILO,
+    /**
+     * K
+     */
+    KILO,
 
-	/**
-	 * L
-	 */
-	LIMA,
+    /**
+     * L
+     */
+    LIMA,
 
-	/**
-	 * M
-	 */
-	MIKE,
+    /**
+     * M
+     */
+    MIKE,
 
-	/**
-	 * N
-	 */
-	NOVEMBER,
+    /**
+     * N
+     */
+    NOVEMBER,
 
-	/**
-	 * O
-	 */
-	OSCAR,
+    /**
+     * O
+     */
+    OSCAR,
 
-	/**
-	 * P
-	 */
-	PAPA,
+    /**
+     * P
+     */
+    PAPA,
 
-	/**
-	 * Q
-	 */
-	QUEBEC,
+    /**
+     * Q
+     */
+    QUEBEC,
 
-	/**
-	 * R
-	 */
-	ROMEO,
+    /**
+     * R
+     */
+    ROMEO,
 
-	/**
-	 * S
-	 */
-	SIERRA,
+    /**
+     * S
+     */
+    SIERRA,
 
-	/**
-	 * T
-	 */
-	TANGO,
+    /**
+     * T
+     */
+    TANGO,
 
-	/**
-	 * U
-	 */
-	UNIFORM,
+    /**
+     * U
+     */
+    UNIFORM,
 
-	/**
-	 * V
-	 */
-	VICTOR,
+    /**
+     * V
+     */
+    VICTOR,
 
-	/**
-	 * W
-	 */
-	WISKEY,
+    /**
+     * W
+     */
+    WISKEY,
 
-	/**
-	 * X
-	 */
-	XRAY,
+    /**
+     * X
+     */
+    XRAY,
 
-	/**
-	 * Y
-	 */
-	YANKEE,
+    /**
+     * Y
+     */
+    YANKEE,
 
-	/**
-	 * Z
-	 */
-	ZULU;
+    /**
+     * Z
+     */
+    ZULU;
 
-	/**
-	 * Get the lower case form of the char
-	 *
-	 * @return the lower case letter representation
-	 */
-	public char getChar()
-	{
-		return this.toString().substring(0, 1).toLowerCase().toCharArray()[0];
-	}
+    /**
+     * ROMEO ALPHA DELTA INDIA OSCAR
+     *
+     * @param msg
+     * @return MIKE SIERRA GOLF
+     */
+    public static String radioTalk(String msg) {
+        String total = "";
 
-	public AlphabetRange to(Alphabet a)
-	{
-		return new AlphabetRange(this, a);
-	}
+        for (Character i : msg.toCharArray()) {
+            total = total + fromChar(i).toString().toLowerCase() + " ";
+        }
 
-	/**
-	 * ROMEO ALPHA DELTA INDIA OSCAR
-	 *
-	 * @param msg
-	 * @return MIKE SIERRA GOLF
-	 */
-	public static String radioTalk(String msg)
-	{
-		String total = "";
+        return total;
+    }
 
-		for(Character i : msg.toCharArray())
-		{
-			total = total + fromChar(i).toString().toLowerCase() + " ";
-		}
+    /**
+     * From char to alphabet
+     *
+     * @param c the char
+     * @return the alphabet representation
+     */
+    public static Alphabet fromChar(char c) {
+        for (Alphabet a : values()) {
+            if (a.getChar() == Character.toLowerCase(c)) {
+                return a;
+            }
+        }
 
-		return total;
-	}
+        return null;
+    }
 
-	/**
-	 * From char to alphabet
-	 *
-	 * @param c
-	 *            the char
-	 * @return the alphabet representation
-	 */
-	public static Alphabet fromChar(char c)
-	{
-		for(Alphabet a : values())
-		{
-			if(a.getChar() == Character.toLowerCase(c))
-			{
-				return a;
-			}
-		}
+    /**
+     * Get the alphabet in a list of chars lowercased
+     *
+     * @return the alphabet
+     */
+    public static KList<Character> getAlphabet() {
+        KList<Character> al = new KList<Character>();
 
-		return null;
-	}
+        for (Alphabet a : values()) {
+            al.add(a.getChar());
+        }
 
-	/**
-	 * Get the alphabet in a list of chars lowercased
-	 *
-	 * @return the alphabet
-	 */
-	public static KList<Character> getAlphabet()
-	{
-		KList<Character> al = new KList<Character>();
+        return al;
+    }
 
-		for(Alphabet a : values())
-		{
-			al.add(a.getChar());
-		}
+    /**
+     * Get the lower case form of the char
+     *
+     * @return the lower case letter representation
+     */
+    public char getChar() {
+        return this.toString().substring(0, 1).toLowerCase().toCharArray()[0];
+    }
 
-		return al;
-	}
+    public AlphabetRange to(Alphabet a) {
+        return new AlphabetRange(this, a);
+    }
 }

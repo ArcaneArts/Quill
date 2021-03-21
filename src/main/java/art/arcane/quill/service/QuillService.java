@@ -1,8 +1,23 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.service;
 
 import art.arcane.quill.Quill;
 import art.arcane.quill.collections.KList;
-import art.arcane.quill.execution.J;
 import art.arcane.quill.format.Form;
 import art.arcane.quill.io.IO;
 import art.arcane.quill.json.JSONObject;
@@ -31,8 +46,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class QuillService implements IService {
     private transient final String serviceName;
     private transient final AtomicBoolean duringInit;
-    private transient ExecutorService sparkplugs;
     private transient final InstanceCreator<IService> serviceInstanceCreator;
+    private transient ExecutorService sparkplugs;
     private transient Gson configGson;
     private transient int serviceId = Quill.serviceIds++;
     private transient int serviceDepth = 0;
@@ -48,17 +63,14 @@ public abstract class QuillService implements IService {
         duringInit = new AtomicBoolean(false);
     }
 
-    private static String toString(Object... l)
-    {
-        if(l.length == 1)
-        {
+    private static String toString(Object... l) {
+        if (l.length == 1) {
             return (l[0] != null ? l[0].toString() : "null");
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for(Object i : l)
-        {
+        for (Object i : l) {
             sb.append(i == null ? "null" : i.toString());
             sb.append(" ");
         }
@@ -66,23 +78,80 @@ public abstract class QuillService implements IService {
         return sb.toString();
     }
 
-    public void i(Object...v)
-    {
+    /**
+     * Called by Quill service management. Do not call this as a service
+     *
+     * @param delegateClass the delegated Quill service
+     * @return the configured service (from json)
+     * @throws NoSuchMethodException     shit happens
+     * @throws IllegalAccessException    shit happens
+     * @throws InvocationTargetException shit happens
+     * @throws InstantiationException    shit happens
+     */
+    public static QuillService initializeConfigured(Class<? extends QuillService> delegateClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        IService delegateDummy = delegateClass.getConstructor().newInstance();
+        File configFile = new File("config/" + delegateDummy.getServiceName().toLowerCase() + ".json");
+        configFile.getParentFile().mkdirs();
+        JSONObject defaultConfig = new JSONObject(new Gson().toJson(delegateDummy));
+        JSONObject currentConfig = new JSONObject();
+
+        if (configFile.exists()) {
+            try {
+                currentConfig = new JSONObject(IO.readAll(configFile));
+            } catch (Throwable e) {
+                L.w("Failed to read config file. Regenerating...");
+                L.ex(e);
+            }
+        }
+
+        for (String i : defaultConfig.keySet()) {
+            if (!currentConfig.has(i)) {
+                L.v("Adding Default config value: " + i);
+                currentConfig.put(i, defaultConfig.get(i));
+            }
+        }
+
+        for (String i : currentConfig.keySet()) {
+            if (!defaultConfig.has(i)) {
+                L.w("Configuration key " + i + " is not reconized. Remove this from " + configFile.getPath());
+            }
+        }
+
+        try {
+            IO.writeAll(configFile, currentConfig.toString(4));
+        } catch (Throwable e) {
+            L.ex(e);
+            Quill.crashStack("Failed to write a config file... This is bad");
+            return null;
+        }
+
+        QuillService svc = new Gson().fromJson(currentConfig.toString(), delegateClass);
+        L.i("Configuration Loaded");
+        return svc;
+    }
+
+    protected static List<Field> getAllFields(Class<?> aClass) {
+        List<Field> fields = new ArrayList<>();
+        do {
+            Collections.addAll(fields, aClass.getDeclaredFields());
+            aClass = aClass.getSuperclass();
+        } while (aClass != null);
+        return fields;
+    }
+
+    public void i(Object... v) {
         L.i((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
-    public void v(Object...v)
-    {
+    public void v(Object... v) {
         L.v((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
-    public void w(Object...v)
-    {
+    public void w(Object... v) {
         L.w((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
-    public void f(Object...v)
-    {
+    public void f(Object... v) {
         L.f((duringInit.get() ? Form.repeat("  ", serviceDepth) : "") + "(" + getServiceName() + ") " + toString(v));
     }
 
@@ -99,8 +168,7 @@ public abstract class QuillService implements IService {
         return null;
     }
 
-    public KList<IService> getChildServices()
-    {
+    public KList<IService> getChildServices() {
         KList<IService> qsw = new KList<>();
 
         for (Field i : getAllFields(getClass())) {
@@ -109,8 +177,7 @@ public abstract class QuillService implements IService {
                     i.setAccessible(true);
                     IService sw = (IService) i.get(this);
 
-                    if(sw != null)
-                    {
+                    if (sw != null) {
                         qsw.add(sw);
                     }
                 }
@@ -192,8 +259,7 @@ public abstract class QuillService implements IService {
             try {
                 IService sw = (IService) i.get(o);
 
-                if(sw == null)
-                {
+                if (sw == null) {
                     sw = (IService) i.getType().getConstructor().newInstance();
                     i.set(o, sw);
                 }
@@ -307,58 +373,6 @@ public abstract class QuillService implements IService {
     }
 
     /**
-     * Called by Quill service management. Do not call this as a service
-     *
-     * @param delegateClass the delegated Quill service
-     * @return the configured service (from json)
-     * @throws NoSuchMethodException     shit happens
-     * @throws IllegalAccessException    shit happens
-     * @throws InvocationTargetException shit happens
-     * @throws InstantiationException    shit happens
-     */
-    public static QuillService initializeConfigured(Class<? extends QuillService> delegateClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        IService delegateDummy = delegateClass.getConstructor().newInstance();
-        File configFile = new File("config/" + delegateDummy.getServiceName().toLowerCase() + ".json");
-        configFile.getParentFile().mkdirs();
-        JSONObject defaultConfig = new JSONObject(new Gson().toJson(delegateDummy));
-        JSONObject currentConfig = new JSONObject();
-
-        if (configFile.exists()) {
-            try {
-                currentConfig = new JSONObject(IO.readAll(configFile));
-            } catch (Throwable e) {
-                L.w("Failed to read config file. Regenerating...");
-                L.ex(e);
-            }
-        }
-
-        for (String i : defaultConfig.keySet()) {
-            if (!currentConfig.has(i)) {
-                L.v("Adding Default config value: " + i);
-                currentConfig.put(i, defaultConfig.get(i));
-            }
-        }
-
-        for (String i : currentConfig.keySet()) {
-            if (!defaultConfig.has(i)) {
-                L.w("Configuration key " + i + " is not reconized. Remove this from " + configFile.getPath());
-            }
-        }
-
-        try {
-            IO.writeAll(configFile, currentConfig.toString(4));
-        } catch (Throwable e) {
-            L.ex(e);
-            Quill.crashStack("Failed to write a config file... This is bad");
-            return null;
-        }
-
-        QuillService svc = new Gson().fromJson(currentConfig.toString(), delegateClass);
-        L.i("Configuration Loaded");
-        return svc;
-    }
-
-    /**
      * Called by the Quill service management. Do not call this. Instead use Quill.shutdown();
      */
     public void stopService() {
@@ -370,14 +384,5 @@ public abstract class QuillService implements IService {
         }
 
         L.i("" + getServiceName() + " Service has Stopped");
-    }
-
-    protected static List<Field> getAllFields(Class<?> aClass) {
-        List<Field> fields = new ArrayList<>();
-        do {
-            Collections.addAll(fields, aClass.getDeclaredFields());
-            aClass = aClass.getSuperclass();
-        } while (aClass != null);
-        return fields;
     }
 }

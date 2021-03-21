@@ -1,3 +1,19 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.service.services;
 
 import art.arcane.quill.Quill;
@@ -7,8 +23,8 @@ import art.arcane.quill.execution.J;
 import art.arcane.quill.format.Form;
 import art.arcane.quill.io.StreamSucker;
 import art.arcane.quill.logging.L;
-import art.arcane.quill.service.util.CMD;
 import art.arcane.quill.service.QuillService;
+import art.arcane.quill.service.util.CMD;
 import lombok.*;
 
 /**
@@ -20,25 +36,20 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ConsoleService extends QuillService {
+    private static final String blank = Form.repeat("    ", 10);
+    private transient final KMap<String, CMD> commands = new KMap<>();
     @Builder.Default
     private long activeFlushInterval = 250;
-
     @Builder.Default
     private long idleFlushInterval = 1000;
-
     @Builder.Default
     private boolean verbose = true;
-
     @Builder.Default
     private boolean deduplicateLines = true;
-
     @Builder.Default
     private boolean allowCommands = true;
-
     @Builder.Default
     private boolean shittyConsole = false;
-    private transient final KMap<String, CMD> commands = new KMap<>();
-    private static final String blank = Form.repeat("    ", 10);
 
     @Override
     public void onEnable() {

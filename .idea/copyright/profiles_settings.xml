@@ -1,0 +1,9 @@
+<component name="CopyrightManager">
+  <settings default="Quill">
+    <module2copyright>
+      <element module="Tests" copyright="Quill" />
+      <element module="Production" copyright="Quill" />
+      <element module="Project Files" copyright="Quill" />
+    </module2copyright>
+  </settings>
+</component>

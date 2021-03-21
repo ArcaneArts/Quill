@@ -1,3 +1,19 @@
+/*
+ * This file is part of Quill by Arcane Arts.
+ *
+ * Quill by Arcane Arts is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Quill by Arcane Arts is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License in this package for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Quill.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package art.arcane.quill.logging;
 
 import art.arcane.quill.collections.KList;
@@ -12,247 +28,191 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class L
-{
-	public static boolean VERBOSE = true;
-     private static final L l = new L();
-	private static String lastTag = "";
-	private static Looper looper;
-	private static Queue<String> logBuffer;
-	public static Consumer<String> consoleConsumer;
-	public static KList<Consumer<String>> logConsumers;
-	public static boolean DEDUPLICATE_LOGS = true;
-	public static long IDLE_FLUSH_INTERVAL = 850;
-	public static long ACTIVE_FLUSH_INTERVAL = 250;
-	
-	public static void clearLogConsumers()
-	{
-		logConsumers.clear();
-	}
+public class L {
+    private static final L l = new L();
+    public static boolean VERBOSE = true;
+    public static Consumer<String> consoleConsumer;
+    public static KList<Consumer<String>> logConsumers;
+    public static boolean DEDUPLICATE_LOGS = true;
+    public static long IDLE_FLUSH_INTERVAL = 850;
+    public static long ACTIVE_FLUSH_INTERVAL = 250;
+    private static String lastTag = "";
+    private static Looper looper;
+    private static Queue<String> logBuffer;
 
-	public static void shutdown() {
-		looper.interrupt();
-	}
+    static {
+        logConsumers = new KList<Consumer<String>>();
+        logBuffer = new ShurikenQueue<String>();
+        consoleConsumer = (s) -> System.out.println(s);
+        looper = new Looper() {
+            @Override
+            protected long loop() {
+                try {
+                    return flush() ? ACTIVE_FLUSH_INTERVAL : IDLE_FLUSH_INTERVAL;
+                } catch (Throwable e) {
+                    return ACTIVE_FLUSH_INTERVAL;
+                }
+            }
+        };
+        looper.setPriority(Thread.MIN_PRIORITY);
+        looper.setName("Log Manager");
+        looper.start();
+    }
 
-	public static void pss() {
-		try {
-			throw new RuntimeException("Stack Trace");
-		} catch (Throwable e) {
-			L.ex(e);
-		}
-	}
-	
-	public static void addLogConsumer(Consumer<String> m)
-	{
-		logConsumers.add(m);
-	}
-	
-	public static void i(Object... o)
-	{
-		l.info(o);
-	}
-	
-	public static void l(Object... o)
-	{
-		l.info(o);
-	}
+    public static void clearLogConsumers() {
+        logConsumers.clear();
+    }
 
-	public static void w(Object... o)
-	{
-		l.warn(o);
-	}
+    public static void shutdown() {
+        looper.interrupt();
+    }
 
-	public static void v(Object... o)
-	{
-		l.verbose(o);
-	}
+    public static void pss() {
+        try {
+            throw new RuntimeException("Stack Trace");
+        } catch (Throwable e) {
+            L.ex(e);
+        }
+    }
 
-	public static void f(Object... o)
-	{
-		l.fatal(o);
-	}
-	
-	public static void e(Object... o)
-	{
-		l.fatal(o);
-	}
+    public static void addLogConsumer(Consumer<String> m) {
+        logConsumers.add(m);
+    }
 
-	protected void info(Object... l)
-	{
-		log("I", l);
-	}
-	
-	protected void log(Object... l)
-	{
-		log("I", l);
-	}
+    public static void i(Object... o) {
+        l.info(o);
+    }
 
-	protected void verbose(Object... l)
-	{
-		if(!VERBOSE)
-		{
-			return;
-		}
+    public static void l(Object... o) {
+        l.info(o);
+    }
 
-		log("V", l);
-	}
+    public static void w(Object... o) {
+        l.warn(o);
+    }
 
-	protected void warn(Object... l)
-	{
-		log("W", l);
-	}
+    public static void v(Object... o) {
+        l.verbose(o);
+    }
 
-	protected void fatal(Object... l)
-	{
-		log("F", l);
-	}
-	
-	protected void error(Object... l)
-	{
-		log("F", l);
-	}
+    public static void f(Object... o) {
+        l.fatal(o);
+    }
 
-	protected void exception(Throwable e)
-	{
-		for(String i : ExceptionTools.toStrings(e))
-		{
-			fatal(i);
-		}
-	}
+    public static void e(Object... o) {
+        l.fatal(o);
+    }
 
-	public static void ex(Throwable e)
-	{
-		for(String i : ExceptionTools.toStrings(e))
-		{
-			l.fatal(i);
-		}
-	}
+    public static void ex(Throwable e) {
+        for (String i : ExceptionTools.toStrings(e)) {
+            l.fatal(i);
+        }
+    }
 
-	private void log(String tag, Object... l)
-	{
-		try
-		{
-			if(l.length == 0)
-			{
-				return;
-			}
+    private static void dump(String f) {
+        if (consoleConsumer != null) {
+            consoleConsumer.accept(f);
+        }
 
-			String tagger = Form.stampTime(M.ms()) + " ";
+        for (Consumer<String> i : logConsumers) {
+            i.accept(f);
+        }
+    }
 
-			if(lastTag.equals(tagger))
-			{
-				tagger = Form.repeat(" ", lastTag.length());
-			}
+    public static boolean flush() {
+        Map<String, Integer> c = DEDUPLICATE_LOGS ? new LinkedHashMap<String, Integer>() : null;
 
-			else
-			{
-				lastTag = tagger;
-			}
+        boolean logged = false;
 
-			if(l.length == 1)
-			{
-				synchronized(logBuffer)
-				{
-					logBuffer.queue(tagger + "|" + tag + " " + Thread.currentThread().getName() + "| " + (l[0] != null ? l[0].toString() : "null"));
-				}
-				return;
-			}
+        while (logBuffer.hasNext()) {
+            String l = logBuffer.next();
 
-			StringBuilder sb = new StringBuilder();
-			for(Object i : l)
-			{
-				sb.append(i == null ? "null" : i.toString());
-				sb.append(" ");
-			}
+            if (DEDUPLICATE_LOGS) {
+                if (!c.containsKey(l)) {
+                    c.put(l, 1);
+                } else {
+                    c.put(l, c.get(l) + 1);
+                }
+            } else {
+                dump(l);
+            }
+        }
 
-			synchronized(logBuffer)
-			{
-				logBuffer.queue(tagger + "|" + Thread.currentThread().getName() + "/" + tag + "| " + sb.toString());
-			}
-		}
-		
-		catch(Throwable e)
-		{
-			
-		}
-	}
+        if (DEDUPLICATE_LOGS) {
+            for (String ix : c.keySet()) {
+                dump(ix + (c.get(ix) > 1 ? (" [x" + c.get(ix) + "]") : ""));
+            }
+        }
 
-	static
-	{
-		logConsumers = new KList<Consumer<String>>();
-		logBuffer = new ShurikenQueue<String>();
-		consoleConsumer = (s) -> System.out.println(s);
-		looper = new Looper()
-		{
-			@Override
-			protected long loop()
-			{
-				try
-				{
-					return flush() ? ACTIVE_FLUSH_INTERVAL : IDLE_FLUSH_INTERVAL;
-				}
-				
-				catch(Throwable e)
-				{
-					return ACTIVE_FLUSH_INTERVAL;
-				}
-			}
-		};
-		looper.setPriority(Thread.MIN_PRIORITY);
-		looper.setName("Log Manager");
-		looper.start();
-	}
+        return logged;
+    }
 
-	private static void dump(String f)
-	{
-		if(consoleConsumer != null)
-		{
-			consoleConsumer.accept(f);
-		}
+    protected void info(Object... l) {
+        log("I", l);
+    }
 
-		for(Consumer<String> i : logConsumers)
-		{
-			i.accept(f);
-		}
-	}
+    protected void log(Object... l) {
+        log("I", l);
+    }
 
-	public static boolean flush()
-	{
-		Map<String, Integer> c = DEDUPLICATE_LOGS ? new LinkedHashMap<String, Integer>() : null;
+    protected void verbose(Object... l) {
+        if (!VERBOSE) {
+            return;
+        }
 
-		boolean logged = false;
+        log("V", l);
+    }
 
-		while(logBuffer.hasNext())
-		{
-			String l = logBuffer.next();
+    protected void warn(Object... l) {
+        log("W", l);
+    }
 
-			if(DEDUPLICATE_LOGS)
-			{
-				if(!c.containsKey(l))
-				{
-					c.put(l, 1);
-				}
+    protected void fatal(Object... l) {
+        log("F", l);
+    }
 
-				else
-				{
-					c.put(l, c.get(l) + 1);
-				}
-			}
+    protected void error(Object... l) {
+        log("F", l);
+    }
 
-			else
-			{
-				dump(l);
-			}
-		}
+    protected void exception(Throwable e) {
+        for (String i : ExceptionTools.toStrings(e)) {
+            fatal(i);
+        }
+    }
 
-		if(DEDUPLICATE_LOGS)
-		{
-			for(String ix : c.keySet())
-			{
-				dump(ix + (c.get(ix) > 1 ? (" [x" + c.get(ix) + "]") : ""));
-			}
-		}
+    private void log(String tag, Object... l) {
+        try {
+            if (l.length == 0) {
+                return;
+            }
 
-		return logged;
-	}
+            String tagger = Form.stampTime(M.ms()) + " ";
+
+            if (lastTag.equals(tagger)) {
+                tagger = Form.repeat(" ", lastTag.length());
+            } else {
+                lastTag = tagger;
+            }
+
+            if (l.length == 1) {
+                synchronized (logBuffer) {
+                    logBuffer.queue(tagger + "|" + tag + " " + Thread.currentThread().getName() + "| " + (l[0] != null ? l[0].toString() : "null"));
+                }
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (Object i : l) {
+                sb.append(i == null ? "null" : i.toString());
+                sb.append(" ");
+            }
+
+            synchronized (logBuffer) {
+                logBuffer.queue(tagger + "|" + Thread.currentThread().getName() + "/" + tag + "| " + sb.toString());
+            }
+        } catch (Throwable e) {
+
+        }
+    }
 }
