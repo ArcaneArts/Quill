@@ -18,6 +18,8 @@ package art.arcane.quill;
 
 import art.arcane.quill.collections.KList;
 import art.arcane.quill.collections.KMap;
+import art.arcane.quill.collections.functional.Function2;
+import art.arcane.quill.collections.functional.Function3;
 import art.arcane.quill.collections.functional.NastyRunnable;
 import art.arcane.quill.execution.J;
 import art.arcane.quill.logging.L;
@@ -37,6 +39,42 @@ public class Quill
 	private static boolean shutdownHooks = false;
 	private static boolean postRan = false;
 	private static final KList<NastyRunnable> post = new KList<>();
+	private static Function3<Throwable, String, Integer, Boolean> crashHandler;
+
+	/**
+	 * Instead of the JVM exiting after quill prints a crash report, this handler will be called. The parameters called are as follows: Throwable (the exception thrown), String (the message provided), Integer (the exit code).
+	 * The return result is a signal to qull for what to do after this handler is called. Return false if you want to stop the JVM from shutting down. Return true if you want quill to continue shutting down as planned.
+	 * @param handler
+	 */
+	public static void overrideCrashesWith(Function3<Throwable, String, Integer, Boolean> handler)
+	{
+		crashHandler = handler;
+	}
+
+	private static void handleCrash(Throwable t, String message, Integer code)
+	{
+		boolean crash = true;
+
+		if(crashHandler != null)
+		{
+			try
+			{
+				crash = crashHandler.apply(t, message, code);
+			}
+
+			catch(Throwable e)
+			{
+				L.f("Crash Handler ... crashed...");
+				L.ex(e);
+				crash = true;
+			}
+		}
+
+		if(crash)
+		{
+			System.exit(code);
+		}
+	}
 
 	public static void postJob(NastyRunnable r)
 	{
@@ -166,22 +204,22 @@ public class Quill
 
 	public static void crash(Throwable e) {
 		printErr("¯\\_(ツ)_/¯", e);
-		shutdown(1);
+		shutdown(e, "¯\\_(ツ)_/¯", 1);
 	}
 
 	public static void crash(String message, Throwable e) {
 		printErr(message, e);
-		shutdown(1);
+		shutdown(e, message, 1);
 	}
 
 	public static void crashStack(String message) {
 		printErr(message);
-		shutdown(1);
+		shutdown(null, message,1);
 	}
 
 	public static void crash(String message) {
 		printErr(message);
-		shutdown(1);
+		shutdown(null, message, 1);
 	}
 
 	private static void printErr(String message) {
@@ -215,7 +253,7 @@ public class Quill
 		L.shutdown();
 	}
 
-	public static void shutdown(int code)
+	public static void shutdown(Throwable t, String msg, int code)
 	{
 		shutdownGracefully();
 
@@ -225,7 +263,7 @@ public class Quill
 			return;
 		}
 
-		System.exit(code);
+		handleCrash(t, msg, code);
 	}
 
 	public static String getDelegateModuleName() {
